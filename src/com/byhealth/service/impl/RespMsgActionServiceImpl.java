@@ -12,7 +12,10 @@ import org.apache.log4j.Logger;
 import com.byhealth.common.framework.base.service.impl.BaseAbstractService;
 import com.byhealth.common.framework.system.pagination.Pagination;
 import com.byhealth.common.utils.CommonUtils;
-import com.byhealth.wechat.base.admin.entity.SysUserEntity;
+import com.byhealth.entity.MaterialEntity;
+import com.byhealth.entity.RespMsgActionEntity;
+import com.byhealth.entity.WechatMenuEntity;
+import com.byhealth.entity.WechatQrcodeEntity;
 
 
 /**

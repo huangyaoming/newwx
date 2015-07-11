@@ -6,13 +6,16 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+
+
+
 //import com.byhealth.common.framework.system.init.SpringBeanFactoryUtil;
 import com.byhealth.common.utils.MessageUtil;
 import com.byhealth.context.WechatContext;
 import com.byhealth.entity.RespMsgActionEntity;
-import com.byhealth.wechat.base.admin.service.MsgTemplateService;
-import com.byhealth.wechat.base.admin.service.RespMsgActionService;
-import com.byhealth.wechat.base.admin.service.WechatPublicAccountService;
+import com.byhealth.service.MsgTemplateService;
+import com.byhealth.service.RespMsgActionService;
+import com.byhealth.service.WechatPublicAccountService;
 
 /**
  * 业务执行器
@@ -23,11 +26,8 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	
 	public static final Logger logger = Logger.getLogger(InServiceExecutor.class);
 	
-	@Autowired
 	protected RespMsgActionService msgActionService;
-	@Autowired
 	protected WechatPublicAccountService wechatPublicAccountService;
-	@Autowired
 	protected MsgTemplateService msgTemplateService;
 
 	/**
@@ -97,6 +97,7 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	 */
 	protected String busiappHandle(String beanName, String methodName) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 		// 从spring中拿到业务bean
+		
 		// TODO
 		Object o = null;
 //		Object o = SpringBeanFactoryUtil.getBean(beanName);

@@ -2,21 +2,20 @@ package com.byhealth.service;
 
 import java.util.Map;
 
-import com.byhealth.common.framework.base.service.IBaseAbstractService;
-import com.byhealth.common.framework.system.pagination.Pagination;
+import com.byhealth.common.utils.Pagination;
+import com.byhealth.entity.KeyWordActionView;
+import com.byhealth.entity.MaterialEntity;
 import com.byhealth.entity.RespMsgActionEntity;
-import com.byhealth.wechat.base.admin.entity.KeyWordActionView;
-import com.byhealth.wechat.base.admin.entity.MaterialEntity;
-import com.byhealth.wechat.base.admin.entity.WechatMenuEntity;
-import com.byhealth.wechat.base.admin.entity.SysUserEntity;
-import com.byhealth.wechat.base.admin.entity.WechatQrcodeEntity;
+import com.byhealth.entity.SysUserEntity;
+import com.byhealth.entity.WechatMenuEntity;
+import com.byhealth.entity.WechatQrcodeEntity;
 
 /**
  * 微信消息响应规则接口
  * @author fengjx xd-fjx@qq.com
  * @version RespMsgActionService.java 2014年10月6日
  */
-public interface RespMsgActionService extends IBaseAbstractService<RespMsgActionEntity> {
+public interface RespMsgActionService {
 	
 	
 	/**

@@ -1,14 +1,11 @@
 package com.byhealth.service.executor;
 
 import com.byhealth.common.bean.req.ReqTextMessage;
+import com.byhealth.common.constants.MsgTemplateConstants;
+import com.byhealth.common.utils.NameTool;
 import com.byhealth.context.WechatContext;
-import com.byhealth.wechat.config.MsgTemplateConstants;
-import com.byhealth.wechat.mysdk.tools.NameTool;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.byhealth.wechat.base.admin.entity.WechatPublicAccountEntity;
-import com.byhealth.wechat.base.admin.service.WechatPublicAccountService;
+import com.byhealth.entity.WechatPublicAccountEntity;
+import com.byhealth.service.impl.MsgTemplateServiceImpl;
 
 /**
  * 验证码消息处理器
@@ -18,8 +15,6 @@ import com.byhealth.wechat.base.admin.service.WechatPublicAccountService;
 public class InWechatValidMsgExecutor extends InServiceExecutor {
 	
 	public static final String EXECUTOR_NAME = "inWechatValidMsgExecutor";
-	
-	private WechatPublicAccountService publicAccountService;
 	
 	@Override
 	public String execute() throws Exception {
@@ -31,12 +26,12 @@ public class InWechatValidMsgExecutor extends InServiceExecutor {
 		//文字消息与验证码相同
 		if(valid_code.equals(textMessage.getContent())){
 			//更新账号状态为激活
-			accountEntity.setValid_state(WechatPublicAccountEntity.VALID_STATE_ACTIVATE);
-			accountEntity.setAccount_id(textMessage.getToUserName());
-			wechatPublicAccountService.update(accountEntity);
-			return doAction(msgTemplateService.getMsgTemplateByKey(MsgTemplateConstants.API_VALID_SUCCESS).getMsg_content());
+			accountEntity.set("valid_state", WechatPublicAccountEntity.VALID_STATE_ACTIVATE);
+			accountEntity.set("account_id", textMessage.getToUserName());
+			accountEntity.save();
+			return doAction(MsgTemplateServiceImpl.getMsgTemplateByKey(MsgTemplateConstants.API_VALID_SUCCESS).getMsg_content());
 		}
-		return doAction(msgTemplateService.getMsgTemplateByKey(MsgTemplateConstants.API_VALID_FAIL).getMsg_content());
+		return doAction(MsgTemplateServiceImpl.getMsgTemplateByKey(MsgTemplateConstants.API_VALID_FAIL).getMsg_content());
 	}
 
 	@Override

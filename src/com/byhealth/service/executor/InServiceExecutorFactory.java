@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.byhealth.wechat.mysdk.process.in.Dispatcher;
 import org.apache.log4j.Logger;
 
 /**

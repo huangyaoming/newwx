@@ -4,10 +4,9 @@ import java.util.Map;
 
 import com.byhealth.common.constants.WechatReqEventConstants;
 import com.byhealth.common.constants.WechatReqMsgtypeConstants;
+import com.byhealth.common.utils.NameTool;
 import com.byhealth.context.WechatContext;
 import com.byhealth.entity.WechatPublicAccountEntity;
-import com.byhealth.wechat.mysdk.process.in.executor.InWechatValidMsgExecutor;
-import com.byhealth.wechat.mysdk.tools.NameTool;
 
 import org.apache.log4j.Logger;
 

@@ -22,7 +22,7 @@ public class InServiceEngineImpl implements InServiceEngine {
 	/**
      * 请求服务工厂
      */
-    private InServiceExecutorFactory inServiceExecutorFactory;
+    private InServiceExecutorFactory inServiceExecutorFactory = new InServiceExecutorFactory();
 	
 	/**
 	 * 处理微信发来的请求

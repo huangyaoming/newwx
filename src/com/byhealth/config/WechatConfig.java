@@ -1,5 +1,7 @@
 package com.byhealth.config;
 
+import com.byhealth.manage.controller.ManageController;
+import com.byhealth.scheduler.QuartzPlugin;
 import com.byhealth.wechat.controller.WechatApiAction;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
@@ -25,14 +27,14 @@ public class WechatConfig extends JFinalConfig {
 
 	@Override
 	public void configRoute(Routes me) {
-//		me.add("/wechat", WechatApiAction.class);
-//		me.add("/manage", ManageController.class);
+		me.add("/wechat", WechatApiAction.class);
+		me.add("/manage", ManageController.class);
 	}
 
 	@Override
 	public void configPlugin(Plugins me) {
 		// 添加数据库插件支持
-		loadPropertyFile("db.properties");
+		loadPropertyFile("jfinal-db.properties");
 		C3p0Plugin c3p0Plugin = new C3p0Plugin(getProperty("jdbc.url"),
 				getProperty("jdbc.username"), getProperty("jdbc.password"));
 		me.add(c3p0Plugin);
@@ -40,6 +42,8 @@ public class WechatConfig extends JFinalConfig {
 		me.add(arp);
 //		arp.addMapping("wechat_public_account", WechatPublicAccount.class);
 
+		QuartzPlugin qp = new QuartzPlugin("job.properties");
+		me.add(qp);
 	}
 
 	@Override

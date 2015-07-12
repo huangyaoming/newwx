@@ -1,4 +1,4 @@
-package com.byhealth.common.framework.base.service.impl;
+package com.byhealth.service.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;

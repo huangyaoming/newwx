@@ -6,11 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.HibernateException;
-import org.springframework.dao.DataAccessException;
-
-import com.byhealth.common.framework.system.pagination.Pagination;
-
+import com.byhealth.common.utils.Pagination;
 
 /**
  * 通用service

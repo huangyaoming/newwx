@@ -120,14 +120,13 @@ public class RecordUtil {
 							}
 						} else {
 							logger.error("unsupport type:" + type.toString());
-							System.out.println("unsupport type:" + type.toString());
 							f.set(entity, value);
 						}
 						
 					} catch (IllegalArgumentException e) {
-						logger.warn(e.getMessage());
+						logger.error(e.getMessage());
 					} catch (IllegalAccessException e) {
-						logger.warn(e.getMessage());
+						logger.error(e.getMessage());
 					}
 				}
 			}
@@ -150,9 +149,9 @@ public class RecordUtil {
 			setRecord2Entity(record, obj);
 			return obj;
 		} catch (InstantiationException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		} catch (IllegalAccessException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -167,8 +166,7 @@ public class RecordUtil {
 	@SuppressWarnings("rawtypes")
 	public static Object getEntityById(Class cls, Object idValue) {
 		if (!ToStringBase.class.isAssignableFrom(cls)) {
-			logger.error("unsupport type. The type must extended ToStringBase");
-			return null;
+			throw new RuntimeException("unsupport type. The type must extended ToStringBase");
 		}
 		try {
 			Object obj = cls.newInstance();
@@ -177,9 +175,9 @@ public class RecordUtil {
 			setRecord2Entity(record, obj);
 			return obj;
 		} catch (InstantiationException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		} catch (IllegalAccessException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -193,17 +191,16 @@ public class RecordUtil {
 	@SuppressWarnings("rawtypes")
 	public static boolean deleteEntityById(Class cls, Object idValue) {
 		if (!ToStringBase.class.isAssignableFrom(cls)) {
-			logger.error("unsupport type. The type must extended ToStringBase");
-			return false;
+			throw new RuntimeException("unsupport type. The type must extended ToStringBase");
 		}
 		try {
 			Object obj = cls.newInstance();
 			String tableName = ((ToStringBase) obj).getTableName();
 			return Db.deleteById(tableName, idValue);
 		} catch (InstantiationException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		} catch (IllegalAccessException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return false;
 	}
@@ -223,9 +220,9 @@ public class RecordUtil {
 			setRecord2Entity(record, obj);
 			return obj;
 		} catch (InstantiationException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		} catch (IllegalAccessException e) {
-			logger.warn(e.getMessage());
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

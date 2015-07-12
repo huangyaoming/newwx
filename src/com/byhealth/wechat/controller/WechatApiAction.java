@@ -21,7 +21,7 @@ import com.jfinal.core.Controller;
 
 public class WechatApiAction extends Controller {
 
-	public static Logger logger = Logger.getLogger(WechatApiAction.class);
+	private static final Logger logger = Logger.getLogger(WechatApiAction.class);
 
 	private InServiceEngineImpl inServiceEngine = new InServiceEngineImpl();
 

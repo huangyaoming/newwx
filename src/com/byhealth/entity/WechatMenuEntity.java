@@ -14,8 +14,7 @@ import com.byhealth.common.utils.RecordUtil;
 /**
  * 菜单表实体 wechat_menu
  * 
- * @author fengjx xd-fjx@qq.com
- * @date 2014年9月11日
+ * @author huangym
  */
 public class WechatMenuEntity extends ToStringBase {
 

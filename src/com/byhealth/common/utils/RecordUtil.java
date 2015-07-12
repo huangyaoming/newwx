@@ -1,6 +1,7 @@
 package com.byhealth.common.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -182,9 +183,33 @@ public class RecordUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * 删除指定id值的类对象
+	 * @param cls
+	 * @param idValue
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static boolean deleteEntityById(Class cls, Object idValue) {
+		if (!ToStringBase.class.isAssignableFrom(cls)) {
+			logger.error("unsupport type. The type must extended ToStringBase");
+			return false;
+		}
+		try {
+			Object obj = cls.newInstance();
+			String tableName = ((ToStringBase) obj).getTableName();
+			return Db.deleteById(tableName, idValue);
+		} catch (InstantiationException e) {
+			logger.warn(e.getMessage());
+		} catch (IllegalAccessException e) {
+			logger.warn(e.getMessage());
+		}
+		return false;
+	}
 
 	/**
-	 * 
+	 * 执行sql获取指定的类对象
 	 * @param cls
 	 * @param sql
 	 * @param paras

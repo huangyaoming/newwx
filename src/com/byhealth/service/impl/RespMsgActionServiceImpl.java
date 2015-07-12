@@ -9,14 +9,16 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.byhealth.common.framework.base.service.impl.BaseAbstractService;
 import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.common.utils.Pagination;
+import com.byhealth.common.utils.RecordUtil;
 import com.byhealth.entity.KeyWordActionView;
 import com.byhealth.entity.MaterialEntity;
 import com.byhealth.entity.RespMsgActionEntity;
+import com.byhealth.entity.SysUserEntity;
 import com.byhealth.entity.WechatMenuEntity;
 import com.byhealth.entity.WechatQrcodeEntity;
+import com.jfinal.plugin.activerecord.Db;
 
 
 /**
@@ -24,7 +26,7 @@ import com.byhealth.entity.WechatQrcodeEntity;
  * @author fengjx xd-fjx@qq.com
  * @date 2014年9月9日
  */
-public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionEntity> implements RespMsgActionService {
+public class RespMsgActionServiceImpl {
 	
 	private static final Logger logger = Logger.getLogger(RespMsgActionServiceImpl.class);
 	
@@ -34,7 +36,7 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#saveAction(com.byhealth.wechat.base.admin.entity.RespMsgActionEntity, com.byhealth.wechat.base.admin.entity.WechatMenuEntity, com.byhealth.wechat.base.admin.entity.MaterialEntity)
 	 */
-	@Override
+	/*
 	public void saveAction(RespMsgActionEntity actionEntity, WechatMenuEntity menuEntity , WechatQrcodeEntity qrcodeEntity , MaterialEntity materialEntity){
 		if(null != menuEntity){	//菜单参数为空，表示不是菜单动作
 			saveMenuAction(actionEntity, menuEntity, materialEntity);
@@ -44,13 +46,14 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 			saveMsgAction(actionEntity, materialEntity);
 		}
 	}
+	*/
 		
 	/*
 	 * 更新消息动作规则
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#updateAction(com.byhealth.wechat.base.admin.entity.RespMsgActionEntity, com.byhealth.wechat.base.admin.entity.WechatMenuEntity, com.byhealth.wechat.base.admin.entity.MaterialEntity)
 	 */
-	@Override
+	/*
 	public void updateAction(RespMsgActionEntity actionEntity, WechatMenuEntity menuEntity, WechatQrcodeEntity qrcodeEntity , MaterialEntity materialEntity){
 		String action_id = actionEntity.getId();
 		if(StringUtils.isNotBlank(action_id)){		//如果是点击类型，先之前的删除消息动作规则
@@ -58,36 +61,37 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 		}
 		saveAction(actionEntity, menuEntity, qrcodeEntity , materialEntity);
 	}
-	
+	*/
 	
 	/*
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#loadMsgAction(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	@Override
 	public RespMsgActionEntity loadMsgAction(String ext_type, String req_type, String event_type, String key_word, SysUserEntity sysUser){
 		RespMsgActionEntity actionEntity = null;
 		List<String> parameters = new ArrayList<String>();
-		StringBuffer hql = new StringBuffer("from RespMsgActionEntity a "); 
-		hql.append("where a.sysUser.id = ? ");
+		StringBuffer sql = new StringBuffer("select * from wechat_resp_msg_action a "); 
+		sql.append("where a.sysUser.id = ? ");
 		parameters.add(sysUser.getId());
 		if(StringUtils.isNotBlank(ext_type)){
-			hql.append(" and a.ext_type = ?");
+			sql.append(" and a.ext_type = ?");
 			parameters.add(ext_type);
 		}
 		if(StringUtils.isNotBlank(req_type)){
-			hql.append(" and a.req_type = ?");
+			sql.append(" and a.req_type = ?");
 			parameters.add(req_type);
 		}
 		if(StringUtils.isNotBlank(event_type)){
-			hql.append(" and a.event_type = ?");
+			sql.append(" and a.event_type = ?");
 			parameters.add(event_type);
 		}
 		if(StringUtils.isNotBlank(key_word)){
-			hql.append(" and a.key_word = ?");
+			sql.append(" and a.key_word = ?");
 			parameters.add(key_word);
 		}
-		actionEntity = findOneByHql(hql.toString(), parameters);
+		actionEntity = (RespMsgActionEntity) RecordUtil
+				.getFirstEntity(RespMsgActionEntity.class, sql.toString(),
+						parameters.toArray());
 		return actionEntity;
 	}
 	
@@ -95,18 +99,18 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionById(java.lang.String)
 	 */
-	@Override
 	public void deleteMsgActionById(String ids) {
 		if(null == ids || "".equals(ids)){
-			throw new MyRuntimeException("ID为空，删除消息动作失败");
+			logger.error("ID为空，删除消息动作失败");
+			return ;
 		}
 		String _ids[] = ids.split(",");
 		if(null != _ids && _ids.length>0){
 			for(String id : _ids){
-				delete(id);
+				RecordUtil.deleteEntityById(RespMsgActionEntity.class, id);
 			}
 		}else{
-			delete(ids);
+			RecordUtil.deleteEntityById(RespMsgActionEntity.class, ids);
 		}
 	}
 	
@@ -115,72 +119,54 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionByKey(java.lang.String)
 	 */
-	@Override
 	public void deleteMsgActionByKey(String key_word){
-		String hql = "delete RespMsgActionEntity a where a.key_word = ?";
-		bulkUpdate(hql, true, key_word);
+		String sql = "delete wechat_resp_msg_action a where a.key_word = ?";
+		Db.update(sql, key_word);
 	}
 	
 	
-	@Override
 	public Pagination<KeyWordActionView> pageMsgAction(Map<String, String> param, SysUserEntity sysUser) {
 		List<Object> parameters = new ArrayList<Object>();
-//		StringBuffer sql = new StringBuffer("select a.id as id, a.req_type as req_type, a.action_type as action_type, a.key_word as key_word, a.material_id as material_id, a.app_id as app_id, a.in_time as in_time,");
-//				sql.append(" b.bean_name as bean_name, b.method_name as method_name, b.name as app_name,");
-//				sql.append(" c.xml_data as xml_data, c.msg_type as msg_type,");
-//				sql.append(" d.dict_name as dict_name");
-//				sql.append(" from wechat_resp_msg_action a");
-//				sql.append(" left join wechat_ext_app b ");
-//				sql.append(" on a.app_id = b.id");
-//				sql.append(" left join wechat_material c");
-//				sql.append(" on a.material_id = c.id");
-//				sql.append(" left join wechat_data_dict d");
-//				sql.append(" on c.msg_type = d.dict_value");
-//				sql.append(" where d.group_code = 'resp_type' ");
-//				sql.append(" and a.user_id = ? ");
-		StringBuffer hql = new StringBuffer("select new com.byhealth.wechat.base.admin.entity.KeyWordActionView( ");
-				hql.append(" a.id as id, a.req_type as req_type, a.action_type as action_type, a.key_word as key_word, a.in_time as in_time,");
-				hql.append(" b.id as app_id, b.bean_name as method_name, b.method_name as method_name, b.name as app_name,");
-				hql.append(" c.id as material_id, c.xml_data as xml_data, c.msg_type as msg_type,");
-				hql.append(" d.dict_name as dict_name )");
-				hql.append(" from RespMsgActionEntity as a, DataDictEntity d");
-				hql.append(" left join a.extApp as b ");
-				hql.append(" left join a.material as c");
-				hql.append(" where a.action_type=d.dict_value");
-				hql.append(" and d.group_code = 'action_type' ");
-				hql.append(" and a.sysUser.id = ? ");
-//		StringBuffer sql = new StringBuffer("select a.id id, a.req_type req_type, a.action_type action_type, a.key_word key_word, a.material_id material_id, a.app_id app_id, a.in_time in_time, a.user_id user_id, a.beanName beanName, a.methodName methodName, a.app_name app_name, a.xml_data xml_data, a.msg_type msg_type, a.dict_name dict_name ");
-//		StringBuffer hql = new StringBuffer("select a.id as id, a.req_type as req_type, a.action_type as action_type, a.key_word as key_word, a.material_id as material_id, a.app_id as app_id, a.in_time as in_time, a.user_id as user_id, a.beanName as beanName, a.methodName as methodName, a.app_name as app_name, a.xml_data as xml_data, a.msg_type as msg_type, a.dict_name as dict_name ");
-//		StringBuffer hql = new StringBuffer();
-//			hql.append("from KeyWordActionView a");
-//			hql.append(" where a.user_id = ? ");	
+		StringBuffer sql = new StringBuffer("select new com.byhealth.wechat.base.admin.entity.KeyWordActionView( ");
+				sql.append(" a.id as id, a.req_type as req_type, a.action_type as action_type, a.key_word as key_word, a.in_time as in_time,");
+				sql.append(" b.id as app_id, b.bean_name as method_name, b.method_name as method_name, b.name as app_name,");
+				sql.append(" c.id as material_id, c.xml_data as xml_data, c.msg_type as msg_type,");
+				sql.append(" d.dict_name as dict_name )");
+				sql.append(" from wechat_resp_msg_action as a, wechat_resp_msg_action d");
+				sql.append(" left join a.extApp as b ");
+				sql.append(" left join a.material as c");
+				sql.append(" where a.action_type=d.dict_value");
+				sql.append(" and d.group_code = 'action_type' ");
+				sql.append(" and a.sysUser.id = ? ");
 		parameters.add(sysUser.getId());
 		if(StringUtils.isNotBlank(param.get("req_type"))){
-			hql.append(" and a.req_type = ?");
+			sql.append(" and a.req_type = ?");
 			parameters.add(param.get("req_type"));
 		}
 		if(StringUtils.isNotBlank(param.get("event_type"))){
-			hql.append(" and a.event_type = ?");
+			sql.append(" and a.event_type = ?");
 			parameters.add(param.get("event_type"));
 		}
 		if(StringUtils.isNotBlank(param.get("action_type"))){
-			hql.append(" and a.action_type = ?");
+			sql.append(" and a.action_type = ?");
 			parameters.add(param.get("action_type"));
 		}
 		if(StringUtils.isNotBlank(param.get("key_word"))){
-			hql.append(" and a.key_word like ?");
+			sql.append(" and a.key_word like ?");
 			parameters.add("%"+param.get("key_word")+"%");
 		}
 		if(StringUtils.isNotBlank(param.get("start_time"))){
-			hql.append(" and a.in_time >= ?");
+			sql.append(" and a.in_time >= ?");
 			parameters.add(CommonUtils.string2Date(param.get("start_time").trim()+" 00:00:00"));
 		}
 		if(StringUtils.isNotBlank(param.get("end_time"))){
-			hql.append(" and a.in_time < ?");
+			sql.append(" and a.in_time < ?");
 			parameters.add(CommonUtils.string2Date(param.get("end_time").trim()+" 23:59:59"));
 		}
-		hql.append(" order by a.in_time desc");
-		return pageByHql(hql.toString(), parameters);
+		sql.append(" order by a.in_time desc");
+		//return pageByHql(sql.toString(), parameters);
+		// TODO
+		return null;
 	}
 
 	/**
@@ -189,6 +175,7 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 	 * @param menuEntity
 	 * @param materialEntity
 	 */
+	/*
 	private void saveMenuAction(RespMsgActionEntity actionEntity, WechatMenuEntity menuEntity, MaterialEntity materialEntity){
 		Date now = new Date();
 		
@@ -233,6 +220,7 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 		}
 		update(menuEntity);
 	}
+	*/
 	
 	/**
 	 * 保存场景码动作
@@ -240,6 +228,7 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 	 * @param qrcodeEntity
 	 * @param materialEntity
 	 */
+	/*
 	private void saveQrcodeAction(RespMsgActionEntity actionEntity, WechatQrcodeEntity qrcodeEntity, MaterialEntity materialEntity){
 		Date now = new Date();
 		qrcodeEntity.setUpdate_time(now);
@@ -278,13 +267,14 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 		}
 		update(qrcodeEntity);
 	}
-
+	*/
 
 	/**
 	 * 保存其他（除菜单外）消息动作
 	 * @param actionEntity
 	 * @param materialEntity
 	 */
+	/*
 	private void saveMsgAction(RespMsgActionEntity actionEntity, MaterialEntity materialEntity){
 
 		Date now = new Date();
@@ -320,6 +310,7 @@ public class RespMsgActionServiceImpl extends BaseAbstractService<RespMsgActionE
 		}
 		save(actionEntity);
 	}
+	*/
 
 }
 

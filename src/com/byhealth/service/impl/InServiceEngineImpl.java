@@ -5,6 +5,8 @@ import java.util.Map;
 import com.byhealth.context.WechatContext;
 import com.byhealth.entity.WechatPublicAccountEntity;
 import com.byhealth.service.InServiceEngine;
+import com.byhealth.service.executor.InServiceExecutor;
+import com.byhealth.service.executor.InServiceExecutorFactory;
 
 import org.apache.log4j.Logger;
 

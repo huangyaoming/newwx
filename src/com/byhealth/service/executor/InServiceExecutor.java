@@ -15,8 +15,7 @@ import com.byhealth.service.impl.RespMsgActionServiceImpl;
 
 /**
  * 业务执行器
- * @author fengjx xd-fjx@qq.com
- * @date 2014年9月11日
+ * @author	huangym
  */
 public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecutorNameWire {
 	

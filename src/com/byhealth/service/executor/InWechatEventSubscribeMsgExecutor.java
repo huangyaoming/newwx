@@ -22,7 +22,8 @@ import java.util.Date;
 
 /**
  * 用户关注消息处理器
- * @author	huangym
+ * 
+ * @author huangym
  */
 public class InWechatEventSubscribeMsgExecutor extends InServiceExecutor {
 
@@ -44,7 +45,7 @@ public class InWechatEventSubscribeMsgExecutor extends InServiceExecutor {
 		if (user == null) {
 			user = new WechatUserEntity();
 		}
-		
+
 		user.set("openid", eventMessage.getFromUserName());
 		user.setOpenid(eventMessage.getFromUserName());
 		// 关注
@@ -67,17 +68,17 @@ public class InWechatEventSubscribeMsgExecutor extends InServiceExecutor {
 		user.set("group_id", jsonUserInfo.getString("groupid"));
 		user.set("headimgurl", jsonUserInfo.getString("headimgurl"));
 		// 只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段
-		//user.set("wechat_openid", jsonUserInfo.getString("unionid"));
+		// user.set("wechat_openid", jsonUserInfo.getString("unionid"));
 
 		// 如果没有关注过，就将用户添加到关注用户表
 		if (user.getId() == null || "".equals(user.getId())) {
 			user.set("id", CommonUtils.getPrimaryKey());
 			user.save();
-		} else {	// 如果之前关注过，则更新用户信息
+		} else { // 如果之前关注过，则更新用户信息
 			user.set("id", user.getId());
 			user.update();
 		}
-		
+
 		String sceneValue = eventMessage.getEventKey();
 		// 带场景值扫描事件
 		if (StringUtils.isNotBlank(sceneValue)) {

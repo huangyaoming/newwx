@@ -13,33 +13,42 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 文本消息处理器
- * @author fengjx xd-fjx@qq.com
- * @date 2014年9月11日
+ * 
+ * @author huangym
  */
 public class InWechatTextMsgExecutor extends InServiceExecutor {
 
 	private static final MyTextExtService textExtService = new MyTextExtService();
-	
+
 	@Override
 	public String execute() throws Exception {
-		ReqTextMessage textMessage = new ReqTextMessage(WechatContext.getWechatPostMap());
-		logger.info("进入文本消息处理器fromUserName="+textMessage.getFromUserName());
-		RespMsgActionEntity actionEntity = RespMsgActionServiceImpl.loadMsgAction(null,WechatReqMsgtypeConstants.REQ_MSG_TYPE_TEXT, null,textMessage.getContent(), WechatContext.getPublicAccount().getSysUser());
-		//没有找到匹配规则
-		if(null == actionEntity){
+		ReqTextMessage textMessage = new ReqTextMessage(
+				WechatContext.getWechatPostMap());
+		logger.info("进入文本消息处理器fromUserName=" + textMessage.getFromUserName());
+		RespMsgActionEntity actionEntity = RespMsgActionServiceImpl
+				.loadMsgAction(null,
+						WechatReqMsgtypeConstants.REQ_MSG_TYPE_TEXT, null,
+						textMessage.getContent(), WechatContext
+								.getPublicAccount().getSysUser());
+		// 没有找到匹配规则
+		if (null == actionEntity || actionEntity.getId() == null
+				|| "".equals(actionEntity.getId())) {
 			String res = textExtService.execute();
-			if(StringUtils.isNotBlank(res)){	//如果有数据则直接返回
+			if (StringUtils.isNotBlank(res)) { // 如果有数据则直接返回
 				return res;
 			}
-			//返回默认回复消息
-			actionEntity = RespMsgActionServiceImpl.loadMsgAction(MsgTemplateConstants.WECHAT_DEFAULT_MSG, null, null, null, WechatContext.getPublicAccount().getSysUser());
+			// 返回默认回复消息
+			actionEntity = RespMsgActionServiceImpl.loadMsgAction(
+					MsgTemplateConstants.WECHAT_DEFAULT_MSG, null, null, null,
+					WechatContext.getPublicAccount().getSysUser());
 		}
 		return doAction(actionEntity);
 	}
 
 	@Override
 	public String getExecutorName() {
-		return NameTool.buildInServiceName(WechatReqMsgtypeConstants.REQ_MSG_TYPE_TEXT, null);
+		return NameTool.buildInServiceName(
+				WechatReqMsgtypeConstants.REQ_MSG_TYPE_TEXT, null);
 	}
 
 }

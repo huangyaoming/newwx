@@ -9,8 +9,7 @@ import com.byhealth.service.impl.MsgTemplateServiceImpl;
 
 /**
  * 验证码消息处理器
- * @author fengjx xd-fjx@qq.com
- * @date 2014年9月11日
+ * @author	huangym
  */
 public class InWechatValidMsgExecutor extends InServiceExecutor {
 	

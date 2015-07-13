@@ -39,8 +39,6 @@ public class MyTextExtService implements TextExtService {
 	public String execute() {
 		String respMessage = null;
 		try {
-			// xml请求解析
-			//Map<String, String> requestMap = MessageUtil.parseXml(request);
 			Map<String, String> requestMap = WechatContext.getWechatPostMap();
 
 			// 发送方帐号（open_id）
@@ -182,11 +180,13 @@ public class MyTextExtService implements TextExtService {
                     respMessage = MessageUtil.textMessageToXml(textMessage);
                 }
             	else if (content.startsWith("留言")) {
-                    textMessage.setContent("<a href=\"http://fengjxblog.sinaapp.com/?page_id=31\">留言</a>");  
+                    //textMessage.setContent("<a href=\"http://fengjxblog.sinaapp.com/?page_id=31\">留言</a>");  
+                    textMessage.setContent("<a href=\"\">留言</a>");  
                     respMessage = MessageUtil.textMessageToXml(textMessage);
                 }
             	else if("game".equals(content)) {
-					textMessage.setContent("进入<a href=\"http://3.fengjianxin.sinaapp.com/wechat/games/fishjoy/index.html\">捕鱼达人</a>");  
+					//textMessage.setContent("进入<a href=\"http://3.fengjianxin.sinaapp.com/wechat/games/fishjoy/index.html\">捕鱼达人</a>");  
+					textMessage.setContent("进入<a href=\"\">捕鱼达人</a>");  
                     respMessage = MessageUtil.textMessageToXml(textMessage);  
 				}else{
                     //没有匹配规则的消息，交给图灵机器人处理

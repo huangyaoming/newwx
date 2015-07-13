@@ -1,11 +1,8 @@
 package com.byhealth.wechat.controller;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -24,13 +21,12 @@ public class WechatApiAction extends Controller {
 	private static final Logger logger = Logger
 			.getLogger(WechatApiAction.class);
 	
-	private static final String TIMESTAMP = "";
+	private static String TIMESTAMP = "";
 
 	private static final InServiceEngineImpl inServiceEngine = new InServiceEngineImpl();
 
 	public void api() throws Exception {
 		HttpServletRequest request = this.getRequest();
-		HttpServletResponse response = this.getResponse();
 		String ticket = this.getPara("ticket");
 		String method = request.getMethod();
 		// 接口认证
@@ -75,8 +71,10 @@ public class WechatApiAction extends Controller {
 					"<MsgType><![CDATA[text]]></MsgType>" + 
 					"<FuncFlag><![CDATA[0]]></FuncFlag></xml>";
 				this.renderText(message);
+				TIMESTAMP = timestamp;
 				return ;
 			}
+			TIMESTAMP = timestamp;
 			
 			// 将参数封装到Threadlocal作为上下文调用
 			WechatContext.setWechatPostMap(parsePostMap(request));

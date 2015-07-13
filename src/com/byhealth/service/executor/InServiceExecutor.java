@@ -10,7 +10,6 @@ import com.byhealth.common.utils.MessageUtil;
 import com.byhealth.context.WechatContext;
 import com.byhealth.entity.RespMsgActionEntity;
 import com.byhealth.service.MsgTemplateService;
-import com.byhealth.service.RespMsgActionService;
 import com.byhealth.service.WechatPublicAccountService;
 import com.byhealth.service.impl.RespMsgActionServiceImpl;
 
@@ -36,10 +35,6 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	 */
 	protected String doAction(String ext_type, String req_type,String event_type,String key_word) throws Exception {
 		RespMsgActionEntity actionEntity = RespMsgActionServiceImpl.loadMsgAction(null,req_type, event_type, key_word, WechatContext.getPublicAccount().getSysUser());
-		//没有找到匹配规则
-		if(null == actionEntity){
-			//返回默认回复消息
-		}
 		return doAction(actionEntity);
 	}
 	
@@ -51,8 +46,7 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	 */
 	protected String doAction(RespMsgActionEntity actionEntity) throws Exception {
 		//没有匹配到消息则返回空字符串，不做响应
-		if(null == actionEntity){
-//			return FreeMarkerUtil.process(null, FtlFilenameConstants.WECHAT_DEFAULT_MSG);
+		if(null == actionEntity || actionEntity.getId() == null || "".equals(actionEntity.getId())) {
 			return "";
 		}
 		String res = null;

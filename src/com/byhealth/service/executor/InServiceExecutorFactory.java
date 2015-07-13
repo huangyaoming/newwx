@@ -28,6 +28,9 @@ public class InServiceExecutorFactory {
 		// 商户 用户关注消息处理器
 		ise = new InWechatEventSubscribeMsgExecutor();
 		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 用户取消关注消息处理器
+		ise = new InWechatEventUnSubscribeMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
 		// 商户 扫描二维码消息处理器
 		ise = new InWechatEventScanMsgExecutor();
 		executorMaps.put(ise.getExecutorName(), ise);

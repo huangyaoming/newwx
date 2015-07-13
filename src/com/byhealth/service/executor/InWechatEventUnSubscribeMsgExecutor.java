@@ -29,11 +29,15 @@ public class InWechatEventUnSubscribeMsgExecutor extends InServiceExecutor {
 		WechatUserEntity user = (WechatUserEntity) RecordUtil
 				.getFirstEntity(WechatUserEntity.class, sql, id,
 						eventMessage.getFromUserName());
-		// 取消关注
-        user.set("subscribe", "0");
-        // 取消关注时间
-        user.set("unsubscribe_time", new Date());
-        user.save();
+		// 更新关注用户表用户信息
+		if (user != null && user.getId() != null && !"".equals(user.getId())) {
+			user.set("id", user.getId());
+			// 取消关注
+	        user.set("subscribe", "0");
+	        // 取消关注时间
+	        user.set("unsubscribe_time", new Date());
+	        user.update();
+		}
         
         return doAction(null, WechatReqMsgtypeConstants.REQ_MSG_TYPE_EVENT, event, null);
     }

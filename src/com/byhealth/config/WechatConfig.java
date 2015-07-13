@@ -1,5 +1,7 @@
 package com.byhealth.config;
 
+import com.byhealth.entity.WechatPublicAccountEntity;
+import com.byhealth.entity.WechatUserEntity;
 import com.byhealth.manage.controller.ManageController;
 import com.byhealth.scheduler.QuartzPlugin;
 import com.byhealth.wechat.controller.WechatApiAction;
@@ -28,7 +30,7 @@ public class WechatConfig extends JFinalConfig {
 	@Override
 	public void configRoute(Routes me) {
 		me.add("/wechat", WechatApiAction.class);
-		me.add("/manage", ManageController.class);
+		me.add("/", ManageController.class);
 	}
 
 	@Override
@@ -40,10 +42,12 @@ public class WechatConfig extends JFinalConfig {
 		me.add(c3p0Plugin);
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(c3p0Plugin);
 		me.add(arp);
-//		arp.addMapping("wechat_public_account", WechatPublicAccount.class);
+		arp.addMapping("wechat_user_info", WechatUserEntity.class);
+		arp.addMapping("wechat_public_account", WechatPublicAccountEntity.class);
 
-		QuartzPlugin qp = new QuartzPlugin("job.properties");
-		me.add(qp);
+		// 定时任务
+//		QuartzPlugin qp = new QuartzPlugin("job.properties");
+//		me.add(qp);
 	}
 
 	@Override

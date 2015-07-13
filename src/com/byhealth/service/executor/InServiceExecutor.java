@@ -6,16 +6,13 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-
-
-
-//import com.byhealth.common.framework.system.init.SpringBeanFactoryUtil;
 import com.byhealth.common.utils.MessageUtil;
 import com.byhealth.context.WechatContext;
 import com.byhealth.entity.RespMsgActionEntity;
 import com.byhealth.service.MsgTemplateService;
 import com.byhealth.service.RespMsgActionService;
 import com.byhealth.service.WechatPublicAccountService;
+import com.byhealth.service.impl.RespMsgActionServiceImpl;
 
 /**
  * 业务执行器
@@ -26,7 +23,6 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	
 	public static final Logger logger = Logger.getLogger(InServiceExecutor.class);
 	
-	protected RespMsgActionService msgActionService;
 	protected WechatPublicAccountService wechatPublicAccountService;
 	protected MsgTemplateService msgTemplateService;
 
@@ -39,7 +35,7 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	 * @throws Exception 
 	 */
 	protected String doAction(String ext_type, String req_type,String event_type,String key_word) throws Exception {
-		RespMsgActionEntity actionEntity = msgActionService.loadMsgAction(null,req_type, event_type, key_word, WechatContext.getPublicAccount().getSysUser());
+		RespMsgActionEntity actionEntity = RespMsgActionServiceImpl.loadMsgAction(null,req_type, event_type, key_word, WechatContext.getPublicAccount().getSysUser());
 		//没有找到匹配规则
 		if(null == actionEntity){
 			//返回默认回复消息

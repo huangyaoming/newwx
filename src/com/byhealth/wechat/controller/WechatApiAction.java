@@ -21,9 +21,12 @@ import com.jfinal.core.Controller;
 
 public class WechatApiAction extends Controller {
 
-	private static final Logger logger = Logger.getLogger(WechatApiAction.class);
+	private static final Logger logger = Logger
+			.getLogger(WechatApiAction.class);
+	
+	private static final String TIMESTAMP = "";
 
-	private InServiceEngineImpl inServiceEngine = new InServiceEngineImpl();
+	private static final InServiceEngineImpl inServiceEngine = new InServiceEngineImpl();
 
 	public void api() throws Exception {
 		HttpServletRequest request = this.getRequest();
@@ -61,12 +64,26 @@ public class WechatApiAction extends Controller {
 					+ " echostr=" + echostr + " myToken=" + token);
 			// 消息处理。除校验接口外，微信以POST方式向接口提交数据
 		} else if ("POST".equalsIgnoreCase(method)) {
+			
+			// TODO	debug时，根据时间戳屏蔽后续的重复发起请求
+			String timestamp = this.getPara("timestamp");
+			if (TIMESTAMP.equals(timestamp)) {
+				String message = "<xml><Content><![CDATA[正在努力处理中。。。]]></Content>" + 
+					"<ToUserName><![CDATA[oY6m_vwRQvoMTehc79zJHgO4kYCE]]></ToUserName>" + 
+					"<FromUserName><![CDATA[gh_b371ccb211a8]]></FromUserName>" + 
+					"<CreateTime><![CDATA[1436766182222]]></CreateTime>" + 
+					"<MsgType><![CDATA[text]]></MsgType>" + 
+					"<FuncFlag><![CDATA[0]]></FuncFlag></xml>";
+				this.renderText(message);
+				return ;
+			}
+			
 			// 将参数封装到Threadlocal作为上下文调用
 			WechatContext.setWechatPostMap(parsePostMap(request));
 			logger.info("微信POST消息请求处理");
 			if (StringUtils.isBlank(ticket)) {
 				logger.info("请求无效，ticket为空");
-				this.write("", response);
+				this.renderText("");
 				return;
 			}
 			String _ticket = PasswordUtil.decode(ticket);
@@ -74,7 +91,7 @@ public class WechatApiAction extends Controller {
 					.getWechatPublicAccountByTicket(_ticket);
 			if (null == account) {
 				logger.info("请求无效，account为空");
-				this.write("", response);
+				this.renderText("");
 				return;
 			}
 			// 将参数封装到Threadlocal作为上下文调用
@@ -84,52 +101,24 @@ public class WechatApiAction extends Controller {
 			// 清理请求数据
 			WechatContext.removeAll();
 			logger.info("微信POST消息请求处理响应==>\n" + respMessage);
-			this.write(respMessage, response);
+			this.renderText(respMessage);
 		}
 	}
-	
+
 	/**
 	 * 将微信POST过来的json转换为map
+	 * 
 	 * @param request
 	 * @return
 	 */
 	private Map<String, String> parsePostMap(HttpServletRequest request) {
-        Map<String, String> map = null;
-        try {
-            map = MessageUtil.parseXml(request);
-        } catch (Exception e) {
-            logger.error("解析微信请求数据出现异常", e);
-        }
-        return map;
-    }
-
-	/**
-	 * 写出数据
-	 * @param res
-	 * @param response
-	 * @throws Exception
-	 */
-	private void write(String res, HttpServletResponse response)
-			throws Exception {
-		Writer writer = null;
+		Map<String, String> map = null;
 		try {
-			res = (null == res ? "" : res);
-			response.setCharacterEncoding("UTF-8");
-			response.setHeader("Content-type", "text/html;charset=UTF-8");
-			writer = response.getWriter();
-			logger.debug("输出JSON字符串：" + res);
-			writer.write(res);
-		} catch (IOException e) {
-			logger.error("输出JSON字符串异常");
-			throw new Exception("write json string error");
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					logger.error("关闭输出流异常,无法关闭会导致内存溢出");
-				}
-			}
+			map = MessageUtil.parseXml(request);
+		} catch (Exception e) {
+			logger.error("解析微信请求数据出现异常", e);
 		}
+		return map;
 	}
+
 }

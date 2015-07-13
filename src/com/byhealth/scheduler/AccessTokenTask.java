@@ -22,8 +22,7 @@ public class AccessTokenTask implements Job {
     private static final Logger logger = Logger.getLogger(AccessTokenTask.class);
 
     private void doTask() {
-    	System.out.println("AccessTokenTask启动，定时清理过期的accesstoken");
-        logger.debug("AccessTokenTask启动，定时清理过期的accesstoken");
+        logger.info("AccessTokenTask启动，定时清理过期的accesstoken");
         Map<String, ApiConfig> map = ApiConfigContext.getApiConfigMap();
         Iterator<Map.Entry<String, ApiConfig>> it = map.entrySet().iterator();
         while (it.hasNext()) {

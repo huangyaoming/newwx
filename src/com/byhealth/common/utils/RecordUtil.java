@@ -61,7 +61,7 @@ public class RecordUtil {
 			for (String column : columns) {
 				Field f = map.get(column);
 				if (f != null) {
-					System.out.println(column + "---->" + column + "(" + f.getType().toString() + ")");
+					//System.out.println(column + "---->" + column + "(" + f.getType().toString() + ")");
 					f.setAccessible(true);
 					Class<?> type = f.getType();
 					try {

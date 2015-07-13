@@ -15,11 +15,36 @@ public class InServiceExecutorFactory {
 	
 	private static final Logger logger = Logger.getLogger(InServiceExecutorFactory.class);
 	
-    /**
+	/**
      * 服务映射
      */
-    private Map<String, InServiceExecutor> executorMaps = new HashMap<String, InServiceExecutor>();
-
+    private static final Map<String, InServiceExecutor> executorMaps;
+    
+	static {
+		executorMaps = new HashMap<String, InServiceExecutor>();
+		// 商户 文本消息处理器
+		InServiceExecutor ise = new InWechatTextMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 用户关注消息处理器
+		ise = new InWechatEventSubscribeMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 扫描二维码消息处理器
+		ise = new InWechatEventScanMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 图片消息处理器
+		ise = new InWechatImageMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 菜单点击事件消息处理器
+		ise = new InWechatEventClickMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 验证码消息验证处理器
+		ise = new InWechatValidMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+		// 商户 地理位置消息处理器
+		ise = new InWechatLocationMsgExecutor();
+		executorMaps.put(ise.getExecutorName(), ise);
+	}
+	
     /**
      * 根据name查询服务执行器
      * 

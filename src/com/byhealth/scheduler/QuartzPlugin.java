@@ -19,6 +19,11 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import com.jfinal.plugin.IPlugin;
 
+/**
+ * 定时任务jFinal插件
+ * @author huangym3
+ *
+ */
 public class QuartzPlugin implements IPlugin {
 	private Logger logger = Logger.getLogger(getClass());
 	private SchedulerFactory sf = null;

@@ -67,11 +67,11 @@ public class RespMsgActionServiceImpl {
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#loadMsgAction(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public RespMsgActionEntity loadMsgAction(String ext_type, String req_type, String event_type, String key_word, SysUserEntity sysUser){
+	public static RespMsgActionEntity loadMsgAction(String ext_type, String req_type, String event_type, String key_word, SysUserEntity sysUser){
 		RespMsgActionEntity actionEntity = null;
 		List<String> parameters = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer("select * from wechat_resp_msg_action a "); 
-		sql.append("where a.sysUser.id = ? ");
+		sql.append("where a.user_id = ? ");
 		parameters.add(sysUser.getId());
 		if(StringUtils.isNotBlank(ext_type)){
 			sql.append(" and a.ext_type = ?");

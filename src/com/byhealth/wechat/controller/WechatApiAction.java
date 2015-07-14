@@ -64,7 +64,7 @@ public class WechatApiAction extends Controller {
 			// TODO	debug时，根据时间戳屏蔽后续的重复发起请求
 			String timestamp = this.getPara("timestamp");
 			if (TIMESTAMP.equals(timestamp)) {
-				String message = "<xml><Content><![CDATA[正在努力处理中。。。]]></Content>" + 
+				String message = "<xml><Content><![CDATA[正在努力处理中...]]></Content>" + 
 					"<ToUserName><![CDATA[oY6m_vwRQvoMTehc79zJHgO4kYCE]]></ToUserName>" + 
 					"<FromUserName><![CDATA[gh_b371ccb211a8]]></FromUserName>" + 
 					"<CreateTime><![CDATA[1436766182222]]></CreateTime>" + 

@@ -19,7 +19,7 @@ public class SysUserEntity extends ToStringBase {
 
 	public static final String IS_ALIVE = "1";
 	public static final String NOT_ALIVE = "0";
-
+	
 	private String id;
 	private String valid_uid;
 	private String username;

@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/view/common/inc/url.jsp" %>
+<%@page import="com.byhealth.entity.WechatPublicAccountEntity"%>
 <script type="text/javascript" charset="UTF-8">
 	var centerTabs;
 	function addTab(opts) {
@@ -35,7 +36,9 @@
 			});
 		}, 0); --%>
 		
-		<c:if test="${empty wechatPublicAccount }">
+		<%WechatPublicAccountEntity wechatPublicAccount = (WechatPublicAccountEntity) request.getAttribute("wechatPublicAccount");
+		if (wechatPublicAccount == null) {
+		%>
 			setTimeout(function() {
 				app.alertModal("你还没有获得授权，请先配置！",{
 					okValue: '生成授权配置',
@@ -50,7 +53,7 @@
 					}
 				});
 			}, 0);
-		</c:if>
+		<%}%>
 	});
 </script>
 <div id="centerTabs" style="height: 1000px;"></div>

@@ -4,6 +4,7 @@ import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.config.AppConfig;
 import com.byhealth.entity.SysUserEntity;
 import com.byhealth.service.impl.SysUserServiceImpl;
+import com.byhealth.service.impl.WechatPublicAccountServiceImpl;
 import com.jfinal.core.Controller;
 
 import java.util.HashMap;
@@ -22,25 +23,38 @@ public class LoginController extends Controller {
 	private static Logger logger = Logger.getLogger(LoginController.class);
 
     public void index() {
-        this.render("/WEB-INF/view/wechat/display/login.jsp");
+        //this.render("/WEB-INF/view/wechat/display/login.jsp");
+    	
+    	// 免登陆
+    	signin();
+    	this.render("/");
     }
 
     public void signin() {
-    	String valid_code = this.getPara("valid_code");
-    	String username = this.getPara("username");
-    	String pwd = this.getPara("pwd");
+    	//String valid_code = this.getPara("valid_code");
+    	//String username = this.getPara("username");
+    	//String pwd = this.getPara("pwd");
+    	
+    	// 免登陆
+    	String username = "huangym";
+    	String pwd = "123456";
     	HttpServletRequest request = this.getRequest();
-        Map<String, Object> res = compareValidCode(request, valid_code);
-        if ("0".equals(res.get("code"))) {
-            this.renderJson(res);
-            return ;
-        }
+    	
+    	// 屏蔽登录验证码
+//        Map<String, Object> res = compareValidCode(request, valid_code);
+//        if ("0".equals(res.get("code"))) {
+//            this.renderJson(res);
+//            return ;
+//        }
+    	
         SysUserEntity sysUser = SysUserServiceImpl.signin(username, pwd);
         logger.info("查询到登陆用户：" + sysUser);
         if (null == sysUser) {
             this.renderJson(CommonUtils.retFailure("用户名或密码错误"));
             return ;
         }
+        sysUser.setWechatPublicAccount(WechatPublicAccountServiceImpl
+				.getWechatPublicAccountBySysUserId(sysUser.getId()));
         request.getSession().setAttribute(AppConfig.LOGIN_FLAG, sysUser);
         this.renderJson(CommonUtils.retSuccess());
     }

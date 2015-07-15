@@ -8,6 +8,7 @@ import com.byhealth.manage.controller.IndexController;
 import com.byhealth.manage.controller.LoginController;
 import com.byhealth.manage.controller.ManageController;
 import com.byhealth.manage.controller.SettingController;
+import com.byhealth.manage.controller.WechatUserController;
 import com.byhealth.scheduler.QuartzPlugin;
 import com.byhealth.wechat.controller.WechatApiAction;
 import com.jfinal.config.Constants;
@@ -40,6 +41,7 @@ public class WechatConfig extends JFinalConfig {
 		me.add("/login", LoginController.class);
 		me.add("/common", CommonController.class);
 		me.add("/setting", SettingController.class);
+		me.add("/user", WechatUserController.class);
 	}
 
 	@Override

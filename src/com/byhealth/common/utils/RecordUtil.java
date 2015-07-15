@@ -234,12 +234,37 @@ public class RecordUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static List<Object> getEntityListFromRecordList(List<Record> list, Class cls) {
-		if(list == null || list.isEmpty()) {
-			return null;
-		}
 		List<Object> result = new ArrayList<Object>();
+		if(list == null || list.isEmpty()) {
+			return result;
+		}
 		for (Record record : list) {
 			result.add(getEntityFromRecord(record, cls));
+		}
+		return result;
+	}
+	
+	/**
+	 * 返回指定类对应的所有数据对象
+	 * @param cls
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public static List<Object> getEntityList(Class cls) {
+		if (!ToStringBase.class.isAssignableFrom(cls)) {
+			throw new RuntimeException("unsupport type. The type must extended ToStringBase");
+		}
+		List<Object> result = null;
+		try {
+			Object obj = cls.newInstance();
+			String tableName = ((ToStringBase) obj).getTableName();
+			String sql = "select * from " + tableName;
+			List<Record> list = Db.find(sql);
+			result = getEntityListFromRecordList(list, cls);
+		} catch (InstantiationException e) {
+			logger.error(e.getMessage());
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
 		}
 		return result;
 	}

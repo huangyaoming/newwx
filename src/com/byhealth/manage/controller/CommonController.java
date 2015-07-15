@@ -74,8 +74,6 @@ public class CommonController extends Controller {
 	@ActionKey("/admin/center")
     public void center() {
 		SysUserEntity user = (SysUserEntity) this.getRequest().getSession().getAttribute(AppConfig.LOGIN_FLAG);
-//		String username = user.getUsername();
-//		this.setAttr("username", username);
 		WechatPublicAccountEntity wechatPublicAccount = user.getWechatPublicAccount();
 		this.setAttr("wechatPublicAccount", wechatPublicAccount);
 		this.render("/WEB-INF/view/wechat/admin/layout/center.jsp");

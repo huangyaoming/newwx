@@ -2,9 +2,12 @@ package com.byhealth.service.impl;
 
 import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.common.utils.Pagination;
+import com.byhealth.common.utils.RecordUtil;
 import com.byhealth.entity.WechatPublicAccountEntity;
-import com.byhealth.entity.WechatUserEntity;
+import com.byhealth.entity.param.WechatUser;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,47 +22,50 @@ import java.util.List;
  */
 public class WechatUserServiceImpl {
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * com.byhealth.wechat.base.web.admin.service.WechatUserService#pageList(com.
-     * fjx.wechat.base.web.admin.entity.WechatUserEntity,
-     * com.byhealth.wechat.base.web.admin.entity.WechatPublicAccountEntity)
-     */
-    public static Pagination<WechatUserEntity> pageList(WechatUserEntity user, String group_id,
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Pagination<WechatUser> pageList(WechatUser user, int pageNumber, int pageSize, 
             WechatPublicAccountEntity publicAccoun) {
-        StringBuilder hql = new StringBuilder(
-                " from WechatUserEntity u where u.publicAccountEntity = ? ");
+    	String select = "select * ";
+        StringBuilder sql = new StringBuilder(
+                " from wechat_user_info u where u.public_account_id = ? ");
         List<Object> params = new ArrayList<Object>();
-        params.add(publicAccoun);
+        params.add(publicAccoun.getId());
         if (StringUtils.isNotBlank(user.getOpenid())) {
-            hql.append(" and u.openid = ?");
+            sql.append(" and u.openid = ?");
             params.add(user.getOpenid());
         }
         if (StringUtils.isNotBlank(user.getStart_time())) {
-            hql.append(" and u.subscribe_time > ?");
+            sql.append(" and u.subscribe_time > ?");
             params.add(CommonUtils.string2Date(user.getStart_time() + " 00:00:00"));
         }
         if (StringUtils.isNotBlank(user.getEnd_time())) {
-            hql.append(" and u.subscribe_time < ?");
+            sql.append(" and u.subscribe_time < ?");
             params.add(CommonUtils.string2Date(user.getEnd_time() + " 23:59:59"));
         }
-        if ("".equals(group_id)) { // 空字符串表示查未分组用户
-            hql.append(" and (u.wechatUserGroupEntity.id = null or u.wechatUserGroupEntity.id = '') ");
-        } else if (group_id != null) {
-            hql.append(" and u.wechatUserGroupEntity.id = ?");
-            params.add(group_id);
+        if ("".equals(user.getGroup_id())) { // 空字符串表示查未分组用户
+            sql.append(" and (u.group_id = null or u.group_id = '') ");
+        } else if (user.getGroup_id() != null) {
+            sql.append(" and u.group_id = ?");
+            params.add(user.getGroup_id());
         }
-        // TODO
-        return null;
-        //return pageByHql(hql.toString(), params);
+        if (pageNumber <= 0) {
+        	pageNumber = 1;
+        }
+        if (pageSize <= 0) {
+        	pageSize = 10;
+        }
+        Page<Record> page = Db.paginate(pageNumber, pageSize, select, sql.toString(), params.toArray());
+        List<Object> list = RecordUtil.getEntityListFromRecordList(page.getList(), WechatUser.class);
+        Pagination p = new Pagination<Object>(list, page.getTotalRow());
+        p.setPageNo(page.getPageNumber());
+        p.setPageSize(page.getPageSize());
+        return p;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * com.byhealth.wechat.base.web.admin.service.WechatUserService#updateGroup(java
-     * .lang.String, java.lang.String)
+    /**
+     * 更新微信用户分组
+     * @param user_id
+     * @param group_id
      */
     public static void updateGroup(String user_id, String group_id) {
         StringBuilder sql = new StringBuilder(

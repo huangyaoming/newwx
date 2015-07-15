@@ -15,7 +15,7 @@ $(function() {
 	// 加载用户分组
 	loadGroupList();
 	datagrid = $('#datagrid').datagrid({
-		url : domain + '/admin/user/userPageList.action',
+		url : domain + '/admin/user/userPageList',
 		toolbar : '#toolbar',
 		iconCls : 'icon-save',
 		pagination : true,
@@ -85,7 +85,7 @@ $(function() {
 			text : '確定',
 			handler : function() {
 				groupForm.form('submit', {
-					url : domain + '/admin/user/saveGroup.action',
+					url : domain + '/admin/user/saveGroup',
 					success : function(res) {
 						fjx.closeProgress();
 						var data = $.evalJSON(res);
@@ -160,7 +160,7 @@ function clearDatagrid() {
 
 function loadGroupList() {
 	$.ajax({
-		url : domain + '/admin/user/groupList.action',
+		url : domain + '/admin/user/groupList',
 		cache : false,
 		dataType : "json",
 		success : function(data) {
@@ -258,7 +258,7 @@ function groupSelect(record) {
 		"group_id" : group_id
 	};
 	$.ajax({
-		url : domain + '/admin/user/updateUser.action',
+		url : domain + '/admin/user/updateUser',
 		cache : false,
 		data : data,
 		dataType : "json",

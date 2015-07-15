@@ -1,6 +1,8 @@
 package com.byhealth.manage.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -8,10 +10,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import com.byhealth.common.utils.CommonUtils;
+import com.byhealth.config.AppConfig;
 import com.byhealth.config.VerifyCodeUtil;
+import com.byhealth.entity.SysUserEntity;
+import com.byhealth.entity.WechatPublicAccountEntity;
 import com.google.code.kaptcha.Constants;
+import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 
 public class CommonController extends Controller {
@@ -54,4 +62,48 @@ public class CommonController extends Controller {
 		}
 		this.renderNull();
 	}
+	
+	@ActionKey("/admin/main")
+    public void view() {
+		SysUserEntity user = (SysUserEntity) this.getRequest().getSession().getAttribute(AppConfig.LOGIN_FLAG);
+		String username = user.getUsername();
+		this.setAttr("username", username);
+        this.render("/WEB-INF/view/wechat/admin/main.jsp");
+    }
+
+	@ActionKey("/admin/center")
+    public void center() {
+		SysUserEntity user = (SysUserEntity) this.getRequest().getSession().getAttribute(AppConfig.LOGIN_FLAG);
+//		String username = user.getUsername();
+//		this.setAttr("username", username);
+		WechatPublicAccountEntity wechatPublicAccount = user.getWechatPublicAccount();
+		this.setAttr("wechatPublicAccount", wechatPublicAccount);
+		this.render("/WEB-INF/view/wechat/admin/layout/center.jsp");
+    }
+
+	@ActionKey("/admin/east")
+    public void east() {
+		this.render("/WEB-INF/view/wechat/admin/layout/east.jsp");
+    }
+
+	@ActionKey("/admin/north")
+    public void north() {
+		this.render("/WEB-INF/view/wechat/admin/layout/north.jsp");
+    }
+
+	@ActionKey("/admin/south")
+    public void south() {
+		this.render("/WEB-INF/view/wechat/admin/layout/south.jsp");
+    }
+
+	@ActionKey("admin/west")
+    public void west() {
+		this.render("/WEB-INF/view/wechat/admin/layout/west.jsp");
+    }
+
+	@ActionKey("admin/sysmenu")
+    public void menu() throws IOException {
+        this.renderText(IOUtils.toString(new FileInputStream(CommonUtils.getClassPath() + File.separator
+                + "admin-menu.json"),"UTF-8"));
+    }
 }

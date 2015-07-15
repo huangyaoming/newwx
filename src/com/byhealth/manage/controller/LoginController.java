@@ -1,5 +1,6 @@
 package com.byhealth.manage.controller;
 
+import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.config.AppConfig;
 import com.byhealth.entity.SysUserEntity;
 import com.byhealth.service.impl.SysUserServiceImpl;
@@ -37,33 +38,11 @@ public class LoginController extends Controller {
         SysUserEntity sysUser = SysUserServiceImpl.signin(username, pwd);
         logger.info("查询到登陆用户：" + sysUser);
         if (null == sysUser) {
-            this.renderJson(retFailure("用户名或密码错误"));
+            this.renderJson(CommonUtils.retFailure("用户名或密码错误"));
             return ;
         }
         request.getSession().setAttribute(AppConfig.LOGIN_FLAG, sysUser);
-        this.renderJson(retSuccess());
-    }
-    
-    protected Map<String, String> retFailure() {
-        return retSuccess("操作失败");
-    }
-    
-    protected Map<String, String> retFailure(String msg) {
-        Map<String, String> res = new HashMap<String, String>();
-        res.put("code", "0");
-        res.put("msg", msg);
-        return res;
-    }
-    
-    protected Map<String, String> retSuccess() {
-        return retSuccess("操作成功");
-    }
-    
-    protected Map<String, String> retSuccess(String msg) {
-        Map<String, String> res = new HashMap<String, String>();
-        res.put("code", "1");
-        res.put("msg", msg);
-        return res;
+        this.renderJson(CommonUtils.retSuccess());
     }
     
     protected Map<String, Object> compareValidCode(HttpServletRequest request,

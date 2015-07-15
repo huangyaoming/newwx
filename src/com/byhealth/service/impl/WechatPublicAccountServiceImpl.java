@@ -2,7 +2,6 @@ package com.byhealth.service.impl;
 
 import com.byhealth.common.utils.RecordUtil;
 import com.byhealth.entity.WechatPublicAccountEntity;
-import com.byhealth.service.WechatPublicAccountService;
 
 public class WechatPublicAccountServiceImpl {
 

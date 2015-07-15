@@ -13,6 +13,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -131,5 +133,27 @@ public final class CommonUtils {
 		}
 		return classPath;
 	}
+	
+	public static Map<String, String> retFailure() {
+        return retFailure("操作失败");
+    }
+    
+    public static Map<String, String> retFailure(String msg) {
+        Map<String, String> res = new HashMap<String, String>();
+        res.put("code", "0");
+        res.put("msg", msg);
+        return res;
+    }
+    
+    public static Map<String, String> retSuccess() {
+        return retSuccess("操作成功");
+    }
+    
+    public static Map<String, String> retSuccess(String msg) {
+        Map<String, String> res = new HashMap<String, String>();
+        res.put("code", "1");
+        res.put("msg", msg);
+        return res;
+    }
 
 }

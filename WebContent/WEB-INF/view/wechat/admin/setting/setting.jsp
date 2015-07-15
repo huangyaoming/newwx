@@ -1,12 +1,16 @@
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/view/common/inc/path.jsp"%>
+<%@page import="com.byhealth.entity.WechatPublicAccountEntity"%>
+<%
+	WechatPublicAccountEntity wechatAccount = (WechatPublicAccountEntity) request.getAttribute("wechatAccount");
+%>
 <!DOCTYPE html>
 <html>
 <head>
 	<title>配置授权</title>
 </head>
 <script type="text/javascript">
-	var valid_state = '${wechatAccount.valid_state}';
+	var valid_state = '<%= wechatAccount.getValid_state()%>';
 </script>
 <body>
 	<div>
@@ -15,49 +19,46 @@
 			<p>通过认证的订阅号，拥有“自定义菜单”；通过认证的服务号，拥有“自定义菜单”和所有“高级接口”</p>
 			<p><strong>配置步骤：</strong></p>
 			<p id="step1">1、<span class="step-info">将授权信息配置到公众平台&nbsp;<a href="javascript:void(-1);"><span class="glyphicon glyphicon-question-sign"></span></a></span></p>
-			<p id="step2">2、<span class="step-info">从微信客户端向公众号发送：${wechatAccount.valid_code }&nbsp;<a href="javascript:void(-1);"><span class="glyphicon glyphicon-question-sign"></span></a></span></p>
+			<p id="step2">2、<span class="step-info">从微信客户端向公众号发送：<%=wechatAccount.getValid_code() %>&nbsp;<a href="javascript:void(-1);"><span class="glyphicon glyphicon-question-sign"></span></a></span></p>
 			<p id="step3">3、<span class="step-info">完成授权</span></p>
 		</div>
 		
 		
 		<form class="form-horizontal" id="form-auth" method="POST">
-			<input type="hidden" id="id" name="id" value="${wechatAccount.id }" />
+			<input type="hidden" id="id" name="id" value="<%=wechatAccount.getId() %>" />
 			<div class="control-group" >
 				<label class="control-label" for="url">URL:</label>
 				<div class="controls">
-					<input readonly="readonly" type="text" class="span4 form-control" id="url" name="url" value="${wechatAccount.url }">
+					<input readonly="readonly" type="text" class="span4 form-control" id="url" name="url" value="<%=wechatAccount.getUrl() %>">
 					<span class="text-primary">复制到公众平台<strong>“开发者中心”</strong>-><strong>“服务器配置”</strong>-><strong>“URL”</strong></span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="token">TOKEN:</label>
 				<div class="controls">
-					<input readonly="readonly" type="text" class="span4 form-control" id="token" name="token" value="${wechatAccount.token }">
+					<input readonly="readonly" type="text" class="span4 form-control" id="token" name="token" value="<%=wechatAccount.getToken() %>">
 					<span class="text-primary">复制到公众平台<strong>“开发者中心”</strong>-><strong>“服务器配置”</strong>-><strong>“TOKEN”</strong></span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="app_id">AppId:</label>
 				<div class="controls">
-					<input type="text" class="span4 form-control" id="app_id" name="app_id" value="${wechatAccount.app_id }">
+					<input type="text" class="span4 form-control" id="app_id" name="app_id" value="<%=wechatAccount.getApp_id() %>">
 					<span class="text-primary">未认证的订阅号可留空</span>
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label" for="app_secret">应用密钥:</label>
 				<div class="controls">
-					<input type="text" class="span4 form-control" id="app_secret" name="app_secret" value="${wechatAccount.app_secret }">
+					<input type="text" class="span4 form-control" id="app_secret" name="app_secret" value="<%=wechatAccount.getApp_secret() %>">
 					<span class="text-primary">未认证的订阅号可留空</span>
 				</div>
 			</div>
-			<c:choose>
-				<c:when test="${ null == wechatAccount.id || '' eq wechatAccount.id }">
-			      	<input style="margin-left: 180px;" class="btn btn-danger" type="submit" id="btn-submit" value="&nbsp;生&nbsp;成&nbsp;授&nbsp;权&nbsp;" />
-				</c:when>
-				<c:otherwise>
-			      	<input style="margin-left: 180px;" class="btn btn-primary" type="submit" id="btn-submit" value="&nbsp;更&nbsp;新&nbsp;授&nbsp;权&nbsp;" />
-				</c:otherwise>
-			</c:choose>
+			<%if (wechatAccount.getId() == null || "".equals(wechatAccount.getId())) {%>
+		      	<input style="margin-left: 180px;" class="btn btn-danger" type="submit" id="btn-submit" value="&nbsp;生&nbsp;成&nbsp;授&nbsp;权&nbsp;" />
+			<%} else { %>
+		      	<input style="margin-left: 180px;" class="btn btn-primary" type="submit" id="btn-submit" value="&nbsp;更&nbsp;新&nbsp;授&nbsp;权&nbsp;" />
+			<%} %>
 	      	
 	      	<div class="dev_right">
 	      	   <h4>账户权限 &nbsp;<span id="refresh" style="cursor: pointer;"><img title="刷新" src="<%=resourceUrl %>/img/refresh.png"></span></h4>

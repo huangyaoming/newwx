@@ -35,7 +35,7 @@
 			});
 		}, 0); --%>
 		
-		<c:if test="${empty sessionScope.sys_user_login_key.wechatPublicAccount }">
+		<c:if test="${empty wechatPublicAccount }">
 			setTimeout(function() {
 				app.alertModal("你还没有获得授权，请先配置！",{
 					okValue: '生成授权配置',

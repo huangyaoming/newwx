@@ -29,6 +29,8 @@ public class SysUserEntity extends ToStringBase {
 	private int score;
 	private Date in_time;
 	private String is_valid; // 0：无效；1：有效
+	
+	
 
 	private WechatPublicAccountEntity wechatPublicAccount;
 
@@ -105,11 +107,6 @@ public class SysUserEntity extends ToStringBase {
 	}
 
 	public WechatPublicAccountEntity getWechatPublicAccount() {
-		Record record = Db.findFirst(
-				"select * from wechat_public_account where sys_user_id = ?",
-				getId());
-		wechatPublicAccount = (WechatPublicAccountEntity) RecordUtil
-				.getEntityFromRecord(record, WechatPublicAccountEntity.class);
 		return wechatPublicAccount;
 	}
 

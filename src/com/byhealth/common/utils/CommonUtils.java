@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author peng
  */
@@ -104,6 +106,18 @@ public final class CommonUtils {
 			logger.error(e.getMessage());
 		}
 		return null;
+	}
+	
+	/**
+     * 获得生成html文件模板路径
+     *
+     * @param request
+     * @return
+     */
+	public static String getFtlHtmlPath(HttpServletRequest request) {
+		String baseUrl = "/WEB-INF/ftl/html";
+		return request.getSession().getServletContext().getRealPath("/")
+				+ baseUrl;
 	}
 
 	/**

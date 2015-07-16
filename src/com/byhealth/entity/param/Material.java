@@ -1,10 +1,9 @@
-package com.byhealth.entity;
+package com.byhealth.entity.param;
 
 import java.util.Date;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.byhealth.common.bean.ToStringBase;
 import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.common.utils.RecordUtil;
 
@@ -13,9 +12,7 @@ import com.byhealth.common.utils.RecordUtil;
  * 
  * @author huangym
  */
-public class MaterialEntity extends ToStringBase {
-
-	private static final long serialVersionUID = 3880248855755446046L;
+public class Material {
 
 	private String id;
 	private String msg_type; // 素材类型(text,news。。。)
@@ -31,7 +28,7 @@ public class MaterialEntity extends ToStringBase {
 		this.user_id = user_id;
 	}
 
-	private SysUserEntity sysUser; // 添加（归属）用户
+	private SysUser sysUser; // 添加（归属）用户
 
 	private String content; // 素材内容，不需要映射
 
@@ -67,14 +64,14 @@ public class MaterialEntity extends ToStringBase {
 		this.in_time = in_time;
 	}
 
-	public SysUserEntity getSysUser() {
+	public SysUser getSysUser() {
 		Record record = Db.findById("wechat_sys_user", getUser_id());
 		sysUser = RecordUtil.getEntityFromRecord(record,
-				SysUserEntity.class);
+				SysUser.class);
 		return sysUser;
 	}
 
-	public void setSysUser(SysUserEntity sysUser) {
+	public void setSysUser(SysUser sysUser) {
 		this.sysUser = sysUser;
 	}
 
@@ -90,8 +87,4 @@ public class MaterialEntity extends ToStringBase {
 		return CommonUtils.date2String(in_time);
 	}
 
-	@Override
-	public String getTableName() {
-		return "wechat_material";
-	}
 }

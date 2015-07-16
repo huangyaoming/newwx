@@ -13,7 +13,6 @@ import com.byhealth.service.impl.WechatUserServiceImpl;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,8 +35,7 @@ public class WechatUserController extends Controller {
     @ActionKey("/admin/user/groupList")
     public void groupList() {
     	String sql = "select * from wechat_user_group ";
-		List<Record> list = Db.find(sql);
-		List<Object> result = RecordUtil.getEntityListFromRecordList(list, WechatUserGroup.class);
+    	List<WechatUserGroup> result = RecordUtil.getEntityList(WechatUserGroup.class, sql);
     	this.renderJson(result);
     }
 

@@ -1,4 +1,4 @@
-package com.byhealth.common.bean;
+package com.byhealth.manage.menu;
 
 
 

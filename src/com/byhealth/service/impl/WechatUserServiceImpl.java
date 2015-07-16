@@ -55,8 +55,8 @@ public class WechatUserServiceImpl {
         	pageSize = 10;
         }
         Page<Record> page = Db.paginate(pageNumber, pageSize, select, sql.toString(), params.toArray());
-        List<Object> list = RecordUtil.getEntityListFromRecordList(page.getList(), WechatUser.class);
-        Pagination p = new Pagination<Object>(list, page.getTotalRow());
+        List<WechatUser> list = RecordUtil.getEntityListFromRecordList(page.getList(), WechatUser.class);
+        Pagination p = new Pagination<WechatUser>(list, page.getTotalRow());
         p.setPageNo(page.getPageNumber());
         p.setPageSize(page.getPageSize());
         return p;

@@ -65,7 +65,6 @@ public class SettingController extends Controller {
 			request.getSession().setAttribute(AppConfig.LOGIN_FLAG, sysUser);
 		}
 		sysUser.setWechatPublicAccount(accountEntity);
-		this.setAttr("valid_state", "1");
 		this.setAttr("wechatAccount", accountEntity);
 		this.render("/WEB-INF/view/wechat/admin/setting/setting.jsp");
 	}

@@ -36,7 +36,6 @@ public class RespMsgActionServiceImpl {
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#saveAction(com.byhealth.wechat.base.admin.entity.RespMsgActionEntity, com.byhealth.wechat.base.admin.entity.WechatMenuEntity, com.byhealth.wechat.base.admin.entity.MaterialEntity)
 	 */
-	/*
 	public void saveAction(RespMsgActionEntity actionEntity, WechatMenuEntity menuEntity , WechatQrcodeEntity qrcodeEntity , MaterialEntity materialEntity){
 		if(null != menuEntity){	//菜单参数为空，表示不是菜单动作
 			saveMenuAction(actionEntity, menuEntity, materialEntity);
@@ -46,7 +45,6 @@ public class RespMsgActionServiceImpl {
 			saveMsgAction(actionEntity, materialEntity);
 		}
 	}
-	*/
 		
 	/*
 	 * 更新消息动作规则
@@ -99,7 +97,7 @@ public class RespMsgActionServiceImpl {
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionById(java.lang.String)
 	 */
-	public void deleteMsgActionById(String ids) {
+	public static void deleteMsgActionById(String ids) {
 		if(null == ids || "".equals(ids)){
 			logger.error("ID为空，删除消息动作失败");
 			return ;
@@ -119,7 +117,7 @@ public class RespMsgActionServiceImpl {
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionByKey(java.lang.String)
 	 */
-	public void deleteMsgActionByKey(String key_word){
+	public static void deleteMsgActionByKey(String key_word){
 		String sql = "delete wechat_resp_msg_action a where a.key_word = ?";
 		Db.update(sql, key_word);
 	}

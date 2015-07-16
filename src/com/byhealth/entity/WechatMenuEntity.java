@@ -131,16 +131,14 @@ public class WechatMenuEntity extends ToStringBase {
 	}
 
 	public Set<WechatMenuEntity> getChildren() {
-		List<Record> list = Db.find(
-				"select * from wechat_menu where parent_id = ?", getId());
-		List<Object> result = RecordUtil.getEntityListFromRecordList(list,
-				WechatMenuEntity.class);
+		String sql = "select * from wechat_menu where parent_id = ?";
+		List<WechatMenuEntity> result = RecordUtil.getEntityList(WechatMenuEntity.class, sql, getId());
 		if (result != null) {
 			if (children == null) {
 				children = new HashSet<WechatMenuEntity>();
 			}
-			for (Object obj : result) {
-				children.add((WechatMenuEntity) obj);
+			for (WechatMenuEntity obj : result) {
+				children.add(obj);
 			}
 		}
 		return children;

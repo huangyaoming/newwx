@@ -1,13 +1,17 @@
 package com.byhealth.config;
 
 import com.byhealth.entity.SysUserEntity;
+import com.byhealth.entity.WechatMenuEntity;
 import com.byhealth.entity.WechatPublicAccountEntity;
 import com.byhealth.entity.WechatUserEntity;
+import com.byhealth.entity.WechatUserGroupEntity;
 import com.byhealth.manage.controller.CommonController;
+import com.byhealth.manage.controller.ExtAppController;
 import com.byhealth.manage.controller.IndexController;
 import com.byhealth.manage.controller.LoginController;
 import com.byhealth.manage.controller.ManageController;
 import com.byhealth.manage.controller.SettingController;
+import com.byhealth.manage.controller.WechatMenuController;
 import com.byhealth.manage.controller.WechatUserController;
 import com.byhealth.scheduler.QuartzPlugin;
 import com.byhealth.wechat.controller.WechatApiAction;
@@ -42,6 +46,8 @@ public class WechatConfig extends JFinalConfig {
 		me.add("/common", CommonController.class);
 		me.add("/setting", SettingController.class);
 		me.add("/user", WechatUserController.class);
+		me.add("/menu", WechatMenuController.class);
+		me.add("/extapp", ExtAppController.class);
 	}
 
 	@Override
@@ -56,6 +62,8 @@ public class WechatConfig extends JFinalConfig {
 		arp.addMapping("wechat_user_info", WechatUserEntity.class);
 		arp.addMapping("wechat_public_account", WechatPublicAccountEntity.class);
 		arp.addMapping("wechat_sys_user", SysUserEntity.class);
+		arp.addMapping("wechat_user_group", WechatUserGroupEntity.class);
+		arp.addMapping("wechat_menu", WechatMenuEntity.class);
 
 		// 定时任务
 //		QuartzPlugin qp = new QuartzPlugin("job.properties");

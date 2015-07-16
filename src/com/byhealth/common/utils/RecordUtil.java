@@ -138,13 +138,12 @@ public class RecordUtil {
 	 * @param cls	指定的类
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public static Object getEntityFromRecord(Record record, Class cls)  {
+	public static <T> T getEntityFromRecord(Record record, Class<T> cls)  {
 		if (record == null) {
 			return null;
 		}
 		try {
-			Object obj = cls.newInstance();
+			T obj = cls.newInstance();
 			setRecord2Entity(record, obj);
 			return obj;
 		} catch (InstantiationException e) {
@@ -162,13 +161,12 @@ public class RecordUtil {
 	 * @param idValue
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public static Object getEntityById(Class cls, Object idValue) {
+	public static <T> T getEntityById(Class<T> cls, Object idValue) {
 		if (!ToStringBase.class.isAssignableFrom(cls)) {
 			throw new RuntimeException("unsupport type. The type must extended ToStringBase");
 		}
 		try {
-			Object obj = cls.newInstance();
+			T obj = cls.newInstance();
 			String tableName = ((ToStringBase) obj).getTableName();
 			Record record = Db.findById(tableName, idValue);
 			setRecord2Entity(record, obj);
@@ -187,13 +185,12 @@ public class RecordUtil {
 	 * @param idValue
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public static boolean deleteEntityById(Class cls, Object idValue) {
+	public static <T> boolean deleteEntityById(Class<T> cls, Object idValue) {
 		if (!ToStringBase.class.isAssignableFrom(cls)) {
 			throw new RuntimeException("unsupport type. The type must extended ToStringBase");
 		}
 		try {
-			Object obj = cls.newInstance();
+			T obj = cls.newInstance();
 			String tableName = ((ToStringBase) obj).getTableName();
 			return Db.deleteById(tableName, idValue);
 		} catch (InstantiationException e) {
@@ -211,10 +208,9 @@ public class RecordUtil {
 	 * @param paras
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public static Object getFirstEntity(Class cls, String sql, Object... paras) {
+	public static <T> T getFirstEntity(Class<T> cls, String sql, Object... paras) {
 		try {
-			Object obj = cls.newInstance();
+			T obj = cls.newInstance();
 			Record record = Db.findFirst(sql, paras);
 			setRecord2Entity(record, obj);
 			return obj;
@@ -227,14 +223,40 @@ public class RecordUtil {
 	}
 	
 	/**
+	 * 根据输入查询语句，生成指定类型对象列表
+	 * @param cls
+	 * @param sql
+	 * @return
+	 */
+	public static <T> List<T> getEntityList(Class<T> cls, String sql) {
+		List<T> result = null;
+		List<Record> list = Db.find(sql);
+		result = getEntityListFromRecordList(list, cls);
+		return result;
+	}
+	
+	/**
+	 * 根据输入查询语句及参数，生成指定类型对象列表
+	 * @param cls
+	 * @param sql
+	 * @param paras
+	 * @return
+	 */
+	public static <T> List<T> getEntityList(Class<T> cls, String sql, Object... paras) {
+		List<T> result = null;
+		List<Record> list = Db.find(sql, paras);
+		result = getEntityListFromRecordList(list, cls);
+		return result;
+	}
+	
+	/**
 	 * 返回一组用传入的jFinal查询结果数据填充的指定类对象
 	 * @param list	查询结果数据列表
 	 * @param cls	指定的类
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
-	public static List<Object> getEntityListFromRecordList(List<Record> list, Class cls) {
-		List<Object> result = new ArrayList<Object>();
+	public static <T> List<T> getEntityListFromRecordList(List<Record> list, Class<T> cls) {
+		List<T> result = new ArrayList<T>();
 		if(list == null || list.isEmpty()) {
 			return result;
 		}
@@ -244,31 +266,6 @@ public class RecordUtil {
 		return result;
 	}
 	
-	/**
-	 * 返回指定类对应的所有数据对象
-	 * @param cls
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	public static List<Object> getEntityList(Class cls) {
-		if (!ToStringBase.class.isAssignableFrom(cls)) {
-			throw new RuntimeException("unsupport type. The type must extended ToStringBase");
-		}
-		List<Object> result = null;
-		try {
-			Object obj = cls.newInstance();
-			String tableName = ((ToStringBase) obj).getTableName();
-			String sql = "select * from " + tableName;
-			List<Record> list = Db.find(sql);
-			result = getEntityListFromRecordList(list, cls);
-		} catch (InstantiationException e) {
-			logger.error(e.getMessage());
-		} catch (IllegalAccessException e) {
-			logger.error(e.getMessage());
-		}
-		return result;
-	}
-
 	/**
 	 * 测试代码
 	 * @param args

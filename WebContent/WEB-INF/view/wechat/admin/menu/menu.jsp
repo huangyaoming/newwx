@@ -14,7 +14,7 @@
 <body>
 	<div class="easyui-layout" data-options="fit:true">
 		<div data-options="region:'north',border:false" style="height:25px;">
-			<h3>可创建最多3个一级菜单，每个一级菜单下可创建最多5个二级菜单。编辑中的菜的那不会马上被用户看到，请放心调试。</h3>
+			<h3>可创建最多3个一级菜单，每个一级菜单下可创建最多5个二级菜单。编辑中的菜单不会马上被用户看到，请放心调试。</h3>
 		</div>
         <div data-options="region:'west'" style="width:300px" title="菜單管理">
         	<table id="menu_treegrid">

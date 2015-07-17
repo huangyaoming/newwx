@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.byhealth.common.constants.WechatRespMsgtypeConstants;
 import com.byhealth.common.utils.CommonUtils;
+import com.byhealth.common.utils.Pagination;
 import com.byhealth.common.utils.RecordUtil;
 import com.byhealth.common.utils.WebUtil;
 
@@ -14,15 +15,13 @@ import org.apache.commons.lang3.StringUtils;
 import com.byhealth.common.utils.CollectionUtil;
 import com.byhealth.config.AppConfig;
 import com.byhealth.entity.ExtAppEntity;
+import com.byhealth.entity.KeyWordActionView;
 import com.byhealth.entity.MaterialEntity;
 import com.byhealth.entity.RespMsgActionEntity;
 import com.byhealth.entity.SysUserEntity;
 import com.byhealth.entity.WechatMenuEntity;
 import com.byhealth.entity.WechatQrcodeEntity;
 import com.byhealth.service.impl.RespMsgActionServiceImpl;
-import com.byhealth.wechat.base.admin.service.MaterialService;
-import com.byhealth.wechat.base.admin.service.RespMsgActionService;
-import com.byhealth.wechat.base.admin.service.WechatQrcodeService;
 import com.jfinal.core.ActionKey;
 import com.jfinal.core.Controller;
 
@@ -32,20 +31,7 @@ import com.jfinal.core.Controller;
  * @author fengjx xd-fjx@qq.com
  * @version RespMsgActionController.java 2014年10月4日
  */
-@Controller
-@RequestMapping("/admin/action")
 public class RespMsgActionController extends Controller {
-	
-	@Autowired
-	private RespMsgActionService actionService;
-	@Autowired
-	private WechatMenuService wechatMenuService;
-	@Autowired
-	private WechatQrcodeService wechatQrcodeService;
-	@Autowired
-	private MaterialService materialService;
-	@Autowired
-	private ExtAppService extAppService;
 	
 	/**
 	 * 关键字回复界面
@@ -88,7 +74,7 @@ public class RespMsgActionController extends Controller {
 	}
 	
 	@ActionKey("/admin/action/delete")
-	public Map<String, String> delete() {
+	public void delete() {
 		String ids = this.getPara("ids");
 		RespMsgActionServiceImpl.deleteMsgActionById(ids);
 		this.renderJson(CommonUtils.retSuccess());
@@ -101,7 +87,7 @@ public class RespMsgActionController extends Controller {
 	 * @return
 	 */
 	@ActionKey("/admin/action/save")
-	public Map<String, String> save() {
+	public void save() {
 		HttpServletRequest request = this.getRequest();
 		RespMsgActionEntity actionEntity = new RespMsgActionEntity();
 		Map<String, String> reqMap = WebUtil.getRequestParams(request);
@@ -124,10 +110,12 @@ public class RespMsgActionController extends Controller {
 			qrcodeEntity.setSysUser(sysUser);
 			qrcodeEntity.setUser_id(sysUser.getId());
 		}
-		if(StringUtils.isNotBlank(actionEntity.getId())){
-			RespMsgActionServiceImpl.updateAction(actionEntity , getWechatMenu(reqMap)   , qrcodeEntity , materialEntity);
-		}else{
-			RespMsgActionServiceImpl.saveAction(actionEntity   , getWechatMenu(reqMap)   , qrcodeEntity , materialEntity);
+		if (StringUtils.isNotBlank(actionEntity.getId())) {
+			RespMsgActionServiceImpl.updateAction(actionEntity,
+					getWechatMenu(reqMap), qrcodeEntity, materialEntity);
+		} else {
+			RespMsgActionServiceImpl.saveAction(actionEntity,
+					getWechatMenu(reqMap), qrcodeEntity, materialEntity);
 		}
 		this.renderJson(CommonUtils.retSuccess());
 	}
@@ -136,18 +124,28 @@ public class RespMsgActionController extends Controller {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/pageList")
-	@ResponseBody
-	public Pagination<KeyWordActionView> pageList(HttpServletRequest request){
-		SysUserEntity sysUser = getLoginSysUser(request);
-		Pagination<KeyWordActionView> pagination = actionService.pageMsgAction(WebUtil.getRequestParams(request),sysUser);
-		return pagination;
+	@ActionKey("/admin/action/pageList")
+	public void pageList(){
+		SysUserEntity sysUser = (SysUserEntity) this.getRequest().getSession().getAttribute(AppConfig.LOGIN_FLAG);
+		int page = Integer.valueOf(this.getPara("page"));
+        int rows = Integer.valueOf(this.getPara("rows"));
+        HttpServletRequest request = this.getRequest();
+		Pagination<KeyWordActionView> pagination = RespMsgActionServiceImpl
+				.pageMsgAction(WebUtil.getRequestParams(request), sysUser,
+						page, rows);
+		this.renderJson(pagination);
 	}
 	
-	@RequestMapping(value="load")
-	@ResponseBody
-	public RespMsgActionEntity loadMsgAction(HttpServletRequest request, String ext_type, String req_type, String event_type, String key_word){
-		return actionService.loadMsgAction(ext_type, req_type, event_type, key_word,getLoginSysUser(request));
+	@ActionKey("/admin/action/load")
+	public void loadMsgAction() {
+		String ext_type = this.getPara("ext_type");
+		String req_type = this.getPara("req_type");
+		String event_type = this.getPara("event_type");
+		String key_word = this.getPara("key_word");
+		SysUserEntity sysUser = (SysUserEntity) this.getRequest().getSession()
+				.getAttribute(AppConfig.LOGIN_FLAG);
+		this.renderJson(RespMsgActionServiceImpl.loadMsgAction(ext_type,
+				req_type, event_type, key_word, sysUser));
 	}
 	
 	/**

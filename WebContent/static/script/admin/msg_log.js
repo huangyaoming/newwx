@@ -51,18 +51,12 @@ $(function() {
 					// field : 'req_type',
 					field : 'req_name',
 					title : '消息类型',
-					width : 50,
-					formatter : function(value, rowData, rowIndex) {
-						return formattime(value);
-					}
+					width : 50
 				}, {
 					// field : 'event_type',
 					field : 'event_name',
 					title : '事件类型',
-					width : 50,
-					formatter : function(value, rowData, rowIndex) {
-						return formattime(value);
-					}
+					width : 50
 				}, {
 					field : 'req_xml',
 					title : '发送内容',

@@ -2,7 +2,6 @@ package com.byhealth.entity;
 
 import java.util.Date;
 
-import com.byhealth.common.bean.ToStringBase;
 import com.byhealth.common.utils.CommonUtils;
 
 /**
@@ -10,9 +9,7 @@ import com.byhealth.common.utils.CommonUtils;
  * 
  * @author huangym
  */
-public class KeyWordActionView extends ToStringBase {
-
-	private static final long serialVersionUID = -3453111249350855477L;
+public class KeyWordActionView {
 
 	// Fields
 	private String id;
@@ -177,12 +174,6 @@ public class KeyWordActionView extends ToStringBase {
 
 	public String getStr_in_time() {
 		return CommonUtils.date2String(in_time);
-	}
-
-	@Override
-	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

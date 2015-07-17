@@ -30,9 +30,8 @@ import com.jfinal.plugin.activerecord.Record;
 public class MaterialServiceImpl {
 
 	public static Pagination<Material> getListPageByType(String type,SysUserEntity sysUser, int pageNumber, int pageSize) {
-		String select = "select * ";
 		String sql = "from wechat_material m where m.msg_type = ? and m.user_id = ? order by m.in_time desc ";
-		Page<Record> p = Db.paginate(pageNumber, pageSize, sql, select, type, sysUser.getId());
+		Page<Record> p = Db.paginate(pageNumber, pageSize, "select * ", sql, type, sysUser.getId());
 		List<Material> list = RecordUtil.getEntityListFromRecordList(p.getList(), Material.class);
 		Pagination<Material> page = new Pagination<Material>(list, p.getTotalRow());
 		page.setPageNo(p.getPageNumber());
@@ -40,7 +39,7 @@ public class MaterialServiceImpl {
 		return page;
 	}
 
-	public void saveOrUpdate(MaterialEntity material, List<Map<String, String>> contents, HttpServletRequest request) throws Exception {
+	public static void saveOrUpdate(MaterialEntity material, List<Map<String, String>> contents, HttpServletRequest request) throws Exception {
 		if(null == material){
 			throw new Exception("添加素材失败，提交的数据为空");
 		}

@@ -105,11 +105,11 @@ function parseRespxml2html(resp_xml,resp_time){
 	}else if(msgType == "image"){	//图片
 		viewHtml = '【图片】MediaId：'+json.MediaId;
 	}else if(msgType == "voice"){	//语音
-		viewHtml = '【語音】MediaId：'+json.MediaId;
+		viewHtml = '【语音】MediaId：'+json.MediaId;
 	}else if(msgType == "video"){	//视频
-		viewHtml = '【視頻】MediaId：'+json.MediaId;
+		viewHtml = '【视频】MediaId：'+json.MediaId;
 	}else if(msgType == "music"){	//音乐
-		viewHtml = '【音樂】MediaId：'+json.MusicURL;
+		viewHtml = '【音乐】MediaId：'+json.MusicURL;
 	}
 	return viewHtml;
 }
@@ -130,27 +130,27 @@ function parseReqxml2html(req_xml,req_time){
 	}else if(msgType == "location"){	//地理位置
 		viewHtml = '【地理位置】'+json.Label+'('+json.Location_Y+','+json.Location_X+')';
 	}else if(msgType == "image"){	//图片
-		viewHtml = '【圖片】MediaId：'+json.MediaId;
+		viewHtml = '【图片】MediaId：'+json.MediaId;
 	}else if(msgType == "voice"){	//语音
-		viewHtml = '【語音】MediaId：'+json.MediaId;
+		viewHtml = '【语音】MediaId：'+json.MediaId;
 	}else if(msgType == "video"){	//视频
-		viewHtml = '【視頻】MediaId：'+json.MediaId;
+		viewHtml = '【视频】MediaId：'+json.MediaId;
 	}else if(msgType == "link"){	//链接
-		viewHtml = '【鏈接】Url：'+json.Url;
+		viewHtml = '【链接】Url：'+json.Url;
 	}else if(msgType == "event"){	//21:15
 		var eventType = json.Event;
 		if(eventType == 'CLICK'){		//菜单点击
-			viewHtml = '【菜單點擊】EventKey：'+json.EventKey;
+			viewHtml = '【菜单点击】EventKey：'+json.EventKey;
 		}else if(eventType == 'VIEW'){		//菜单跳转
-			viewHtml = '【菜單跳轉】EventKey：'+json.EventKey;
+			viewHtml = '菜单跳转EventKey：'+json.EventKey;
 		}else if(eventType == 'LOCATION'){	//上报地理位置
-			viewHtml = '【上報地理位置】EventKey：'+json.EventKey;
+			viewHtml = '【上传地理位置】EventKey：'+json.EventKey;
 		}else if(eventType == 'SCAN'){	//用户已关注时的事件推送（二维码扫描）
-			viewHtml = '【二維碼掃描】EventKey：'+json.EventKey;
+			viewHtml = '【二维码扫描】EventKey：'+json.EventKey;
 		}else if(eventType == 'subscribe'){	//用户关注
-			viewHtml = '【用戶訂閱】';
+			viewHtml = '【订阅/关注】';
 		}else if(eventType == 'unsubscribe'){	//用户关注
-			viewHtml = '【取消訂閱】';
+			viewHtml = '【取消订阅/关注】';
 		}
 	}
 	return viewHtml;

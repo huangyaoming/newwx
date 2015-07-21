@@ -1,11 +1,14 @@
 package com.byhealth.config;
 
 import com.byhealth.entity.DataDictEntity;
+import com.byhealth.entity.ExtAppEntity;
 import com.byhealth.entity.MaterialEntity;
 import com.byhealth.entity.RespMsgActionEntity;
 import com.byhealth.entity.SysUserEntity;
+import com.byhealth.entity.WechatKefuAccountEntity;
 import com.byhealth.entity.WechatMenuEntity;
 import com.byhealth.entity.WechatPublicAccountEntity;
+import com.byhealth.entity.WechatQrcodeEntity;
 import com.byhealth.entity.WechatUserEntity;
 import com.byhealth.entity.WechatUserGroupEntity;
 import com.byhealth.manage.controller.CommonController;
@@ -18,7 +21,9 @@ import com.byhealth.manage.controller.MaterialController;
 import com.byhealth.manage.controller.ReqMsglogController;
 import com.byhealth.manage.controller.RespMsgActionController;
 import com.byhealth.manage.controller.SettingController;
+import com.byhealth.manage.controller.WechatKefuController;
 import com.byhealth.manage.controller.WechatMenuController;
+import com.byhealth.manage.controller.WechatQrcodeController;
 import com.byhealth.manage.controller.WechatUserController;
 import com.byhealth.scheduler.QuartzPlugin;
 import com.byhealth.wechat.controller.WechatApiAction;
@@ -59,6 +64,8 @@ public class WechatConfig extends JFinalConfig {
 		me.add("/reqmsglog", ReqMsglogController.class);
 		me.add("/datadict", DataDictController.class);
 		me.add("/material", MaterialController.class);
+		me.add("/qrcode", WechatQrcodeController.class);
+		me.add("/kefu", WechatKefuController.class);
 	}
 
 	@Override
@@ -78,6 +85,9 @@ public class WechatConfig extends JFinalConfig {
 		arp.addMapping("wechat_resp_msg_action", RespMsgActionEntity.class);
 		arp.addMapping("wechat_data_dict", DataDictEntity.class);
 		arp.addMapping("wechat_material", MaterialEntity.class);
+		arp.addMapping("wechat_ext_app", ExtAppEntity.class);
+		arp.addMapping("wechat_qrcode", WechatQrcodeEntity.class);
+		arp.addMapping("wechat_kefu_account", WechatKefuAccountEntity.class);
 
 		// 定时任务
 //		QuartzPlugin qp = new QuartzPlugin("job.properties");

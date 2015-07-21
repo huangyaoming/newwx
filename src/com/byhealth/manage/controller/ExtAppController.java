@@ -49,6 +49,9 @@ public class ExtAppController extends Controller {
 		ExtAppEntity extApp = new ExtAppEntity();
 		int page = Integer.valueOf(this.getPara("page"));
         int rows = Integer.valueOf(this.getPara("rows"));
+        if (page <= 0) {
+        	page = 1;
+        }
 		this.renderJson(ExtAppServiceImpl.pageList(extApp, page, rows));
 	}
 

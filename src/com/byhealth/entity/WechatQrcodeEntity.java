@@ -9,7 +9,7 @@ import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.common.utils.RecordUtil;
 
 /**
- * 菜单表实体 wechat_qrcode
+ * 二维码 wechat_qrcode
  * 
  * @author huangym
  */

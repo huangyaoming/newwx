@@ -14,9 +14,15 @@ import com.byhealth.common.utils.QrcodeClient;
 import com.byhealth.common.utils.QrcodeCreate;
 import com.byhealth.common.utils.QrcodeScene;
 import com.byhealth.common.utils.RecordUtil;
+import com.byhealth.entity.ExtAppEntity;
+import com.byhealth.entity.MaterialEntity;
+import com.byhealth.entity.RespMsgActionEntity;
 import com.byhealth.entity.SysUserEntity;
 import com.byhealth.entity.WechatQrcodeEntity;
+import com.jfinal.aop.Before;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
 
 /**
  * 情景二维码
@@ -26,42 +32,85 @@ import com.jfinal.plugin.activerecord.Db;
  */
 public class WechatQrcodeServiceImpl {
 
-	public static Pagination<Map<String, Object>> pageList(WechatQrcodeEntity qrcode , SysUserEntity sysUser) {
+	public static Pagination<Map<String, Object>> pageList(
+			WechatQrcodeEntity qrcode, SysUserEntity sysUser, int pageNumber,
+			int pageSize) {
 		List<Object> params = new ArrayList<Object>();
-		StringBuffer sql = new StringBuffer("select q.id as \"id\", q.in_time as \"in_time\", q.scene_value as \"scene_value\", q.name as \"name\", q.scene_action as \"scene_action\", q.update_time as \"update_time\", q.user_id as \"user_id\",");
-					 sql.append(" a.id as \"action_id\", a.action_type as \"action_type\", a.in_time as \"action_time\", ");
-					 sql.append(" b.id as \"app_id\",b.name as \"app_name\", b.description as \"app_description\",");
-					 sql.append(" c.id as \"material_id\",c.xml_data as \"xml_data\" ");
-					 sql.append(" from wechat_qrcode q ");
-					 sql.append(" left join wechat_resp_msg_action a on q.scene_action = a.key_word ");
-					 sql.append(" left join wechat_ext_app b on a.app_id = b.id ");
-					 sql.append(" left join wechat_material c on a.material_id = c.id ");
-					 sql.append(" where q.user_id = ?");
-        params.add(sysUser.getId());
+		StringBuffer select = new StringBuffer("select q.id as \"id\", q.in_time as \"in_time\", q.scene_value as \"scene_value\", ");
+		select.append("q.name as \"name\", q.scene_action as \"scene_action\", q.update_time as \"update_time\", q.user_id as \"user_id\",");
+		select.append(" a.id as \"action_id\", a.action_type as \"action_type\", a.in_time as \"action_time\", ");
+		select.append(" b.id as \"app_id\",b.name as \"app_name\", b.description as \"app_description\",");
+		select.append(" c.id as \"material_id\",c.xml_data as \"xml_data\" ");
+		
+		StringBuffer sql = new StringBuffer(" from wechat_qrcode q ");
+		sql.append(" left join wechat_resp_msg_action a on q.scene_action = a.key_word ");
+		sql.append(" left join wechat_ext_app b on a.app_id = b.id ");
+		sql.append(" left join wechat_material c on a.material_id = c.id ");
+		sql.append(" where q.user_id = ?");
+		params.add(sysUser.getId());
 		if (StringUtils.isNotBlank(qrcode.getScene_value())) {
 			sql.append(" and q.scene_value = ?");
 			params.add(qrcode.getScene_value());
 		}
 		if (StringUtils.isNotBlank(qrcode.getName())) {
 			sql.append(" and q.name like ? ");
-			params.add("%"+qrcode.getName()+"%");
+			params.add("%" + qrcode.getName() + "%");
 		}
-		return null;
-		// TODO
-		//return pageListMapBySql(sql.toString() , params.toArray());
+		Page<Record> p = Db.paginate(pageNumber, pageSize, select.toString(), sql.toString(), params.toArray());
+		List<Record> list = p.getList();
+		List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
+		if (list != null) {
+			for (Record record : list) {
+				result.add(record.getColumns());
+			}
+		}
+		Pagination<Map<String, Object>> page = new Pagination<Map<String,Object>>(result, p.getTotalRow());
+		page.setPageNo(p.getPageNumber());
+        page.setPageSize(p.getPageSize());
+        return page;
 	}
 
 	public static void deleteQrcodesById(String ids) {
-		if(null == ids || "".equals(ids)){
+		if (null == ids || "".equals(ids)) {
 			throw new RuntimeException("ID为空，删除情景二维码失败");
 		}
 		String _ids[] = ids.split(",");
-		if(null != _ids && _ids.length>0){
-			for(String id : _ids){
+		if (null != _ids && _ids.length > 0) {
+			for (String id : _ids) {
+				Record record = Db.findById("wechat_qrcode", id);
 				RecordUtil.deleteEntityById(WechatQrcodeEntity.class, id);
+				if (record != null && record.get("scene_action") != null) {
+					Record r = Db.findFirst("select * from wechat_resp_msg_action a where a.key_word = ?", record.get("scene_action"));
+					if (r != null && r.get("id") != null) {
+						RecordUtil.deleteEntityById(RespMsgActionEntity.class, r.get("id"));
+					}
+					// 删除关联素材
+					if (r != null && r.get("material_id") != null) {
+						RecordUtil.deleteEntityById(MaterialEntity.class, r.get("material_id"));
+					}
+					// 删除关联扩展应用
+					if (r != null && r.get("app_id") != null) {
+						RecordUtil.deleteEntityById(ExtAppEntity.class, r.get("app_id"));
+					}
+				}
 			}
-		}else{
+		} else {
+			Record record = Db.findById("wechat_qrcode", ids);
 			RecordUtil.deleteEntityById(WechatQrcodeEntity.class, ids);
+			if (record != null && record.get("scene_action") != null) {
+				Record r = Db.findFirst("select * from wechat_resp_msg_action a where a.key_word = ", record.get("scene_action"));
+				if (r != null && r.get("id") != null) {
+					RecordUtil.deleteEntityById(RespMsgActionEntity.class, r.get("id"));
+				}
+				// 删除关联素材
+				if (r != null && r.get("material_id") != null) {
+					RecordUtil.deleteEntityById(MaterialEntity.class, r.get("material_id"));
+				}
+				// 删除关联扩展应用
+				if (r != null && r.get("app_id") != null) {
+					RecordUtil.deleteEntityById(ExtAppEntity.class, r.get("app_id"));
+				}
+			}
 		}
 	}
 

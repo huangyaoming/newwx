@@ -90,6 +90,13 @@ public class RespMsgActionController extends Controller {
 	public void save() {
 		HttpServletRequest request = this.getRequest();
 		RespMsgActionEntity actionEntity = new RespMsgActionEntity();
+		actionEntity.setId(this.getPara("id"));
+		actionEntity.setExt_type(this.getPara("ext_type"));
+		actionEntity.setReq_type(this.getPara("req_type"));
+		actionEntity.setEvent_type(this.getPara("event_type"));
+		actionEntity.setKey_word(this.getPara("key_word"));
+		actionEntity.setAction_type(this.getPara("action_type"));
+		actionEntity.setApp_id(this.getPara("extAppId"));
 		Map<String, String> reqMap = WebUtil.getRequestParams(request);
 		MaterialEntity materialEntity = getMaterial(reqMap);
 		SysUserEntity sysUser = (SysUserEntity) this.getRequest().getSession().getAttribute(AppConfig.LOGIN_FLAG);
@@ -194,8 +201,6 @@ public class RespMsgActionController extends Controller {
 		if(CollectionUtil.isNotEmpty(reqMap) && StringUtils.isNotBlank(reqMap.get("materiaContent"))){
 			if (entity == null || entity.getId() == null) {
 				entity = new MaterialEntity();
-				String key = CommonUtils.getPrimaryKey();
-				entity.setId(key);
 			}
 			entity.setContent(reqMap.get("materiaContent"));
 			entity.setMsg_type(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_TEXT);

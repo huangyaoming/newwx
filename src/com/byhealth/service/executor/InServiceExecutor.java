@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.byhealth.common.utils.MessageUtil;
 import com.byhealth.context.WechatContext;
 import com.byhealth.entity.RespMsgActionEntity;
+import com.byhealth.entity.param.RespMsgAction;
 import com.byhealth.service.MsgTemplateService;
 import com.byhealth.service.WechatPublicAccountService;
 import com.byhealth.service.impl.RespMsgActionServiceImpl;
@@ -33,8 +34,8 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	 * @throws Exception 
 	 */
 	protected String doAction(String ext_type, String req_type,String event_type,String key_word) throws Exception {
-		RespMsgActionEntity actionEntity = RespMsgActionServiceImpl.loadMsgAction(null,req_type, event_type, key_word, WechatContext.getPublicAccount().getSysUser());
-		return doAction(actionEntity);
+		RespMsgAction action = RespMsgActionServiceImpl.loadMsgAction(null,req_type, event_type, key_word, WechatContext.getPublicAccount().getSysUser());
+		return doAction(action);
 	}
 	
 	/**
@@ -43,17 +44,17 @@ public abstract class InServiceExecutor implements ServiceExecutor, ServiceExecu
 	 * @return
 	 * @throws Exception
 	 */
-	protected String doAction(RespMsgActionEntity actionEntity) throws Exception {
+	protected String doAction(RespMsgAction action) throws Exception {
 		//没有匹配到消息则返回空字符串，不做响应
-		if(null == actionEntity || actionEntity.getId() == null || "".equals(actionEntity.getId())) {
+		if(null == action || action.getId() == null || "".equals(action.getId())) {
 			return "";
 		}
 		String res = null;
-		String actionType = actionEntity.getAction_type();
+		String actionType = action.getAction_type();
 		if(RespMsgActionEntity.ACTION_TYPE_MATERIAL.equals(actionType)){	//从素材取数据
-			res = actionEntity.getMaterial().getXml_data();
+			res = action.getMaterial().getXml_data();
 		}else if(RespMsgActionEntity.ACTION_TYPE_API.equals(actionType)){	//从接口返回数据
-			res = busiappHandle(actionEntity.getExtApp().getBean_name(), actionEntity.getExtApp().getMethod_name());
+			res = busiappHandle(action.getExtApp().getBean_name(), action.getExtApp().getMethod_name());
 		}
 		return doAction(res);
 	}

@@ -15,12 +15,14 @@ import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.common.utils.MaterialUtil;
 import com.byhealth.common.utils.Pagination;
 import com.byhealth.common.utils.RecordUtil;
+import com.byhealth.entity.ExtAppEntity;
 import com.byhealth.entity.KeyWordActionView;
 import com.byhealth.entity.MaterialEntity;
 import com.byhealth.entity.RespMsgActionEntity;
 import com.byhealth.entity.SysUserEntity;
 import com.byhealth.entity.WechatMenuEntity;
 import com.byhealth.entity.WechatQrcodeEntity;
+import com.byhealth.entity.param.RespMsgAction;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -41,12 +43,14 @@ public class RespMsgActionServiceImpl {
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#saveAction(com.byhealth.wechat.base.admin.entity.RespMsgActionEntity, com.byhealth.wechat.base.admin.entity.WechatMenuEntity, com.byhealth.wechat.base.admin.entity.MaterialEntity)
 	 */
-	public static void saveAction(RespMsgActionEntity actionEntity, WechatMenuEntity menuEntity , WechatQrcodeEntity qrcodeEntity , MaterialEntity materialEntity){
-		if(null != menuEntity){	//菜单参数为空，表示不是菜单动作
+	public static void saveAction(RespMsgActionEntity actionEntity,
+			WechatMenuEntity menuEntity, WechatQrcodeEntity qrcodeEntity,
+			MaterialEntity materialEntity) {
+		if (null != menuEntity) { // 菜单参数为空，表示不是菜单动作
 			saveMenuAction(actionEntity, menuEntity, materialEntity);
-		}if(null != qrcodeEntity){	//菜单参数为空，表示不是菜单动作
+		} else if (null != qrcodeEntity) { // 菜单参数为空，表示不是菜单动作
 			saveQrcodeAction(actionEntity, qrcodeEntity, materialEntity);
-		}else{
+		} else {
 			saveMsgAction(actionEntity, materialEntity);
 		}
 	}
@@ -68,8 +72,8 @@ public class RespMsgActionServiceImpl {
 	 * (non-Javadoc)
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#loadMsgAction(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public static RespMsgActionEntity loadMsgAction(String ext_type, String req_type, String event_type, String key_word, SysUserEntity sysUser){
-		RespMsgActionEntity actionEntity = null;
+	public static RespMsgAction loadMsgAction(String ext_type, String req_type, String event_type, String key_word, SysUserEntity sysUser){
+		RespMsgAction actionEntity = null;
 		List<String> parameters = new ArrayList<String>();
 		StringBuffer sql = new StringBuffer("select * from wechat_resp_msg_action a "); 
 		sql.append("where a.user_id = ? ");
@@ -90,7 +94,7 @@ public class RespMsgActionServiceImpl {
 			sql.append(" and a.key_word = ?");
 			parameters.add(key_word);
 		}
-		actionEntity = RecordUtil.getFirstEntity(RespMsgActionEntity.class,
+		actionEntity = RecordUtil.getFirstEntity(RespMsgAction.class,
 				sql.toString(), parameters.toArray());
 		return actionEntity;
 	}
@@ -107,10 +111,28 @@ public class RespMsgActionServiceImpl {
 		String _ids[] = ids.split(",");
 		if(null != _ids && _ids.length>0){
 			for(String id : _ids){
+				Record record = Db.findById("wechat_resp_msg_action", id);
 				RecordUtil.deleteEntityById(RespMsgActionEntity.class, id);
+				// 删除关联素材
+				if (record != null && record.get("material_id") != null) {
+					RecordUtil.deleteEntityById(MaterialEntity.class, record.get("material_id"));
+				}
+				// 删除关联扩展应用
+				if (record != null && record.get("app_id") != null) {
+					RecordUtil.deleteEntityById(ExtAppEntity.class, record.get("app_id"));
+				}
 			}
 		}else{
+			Record record = Db.findById("wechat_resp_msg_action", ids);
 			RecordUtil.deleteEntityById(RespMsgActionEntity.class, ids);
+			// 删除关联素材
+			if (record != null && record.get("material_id") != null) {
+				RecordUtil.deleteEntityById(MaterialEntity.class, record.get("material_id"));
+			}
+			// 删除关联扩展应用
+			if (record != null && record.get("app_id") != null) {
+				RecordUtil.deleteEntityById(ExtAppEntity.class, record.get("app_id"));
+			}
 		}
 	}
 	
@@ -120,8 +142,18 @@ public class RespMsgActionServiceImpl {
 	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionByKey(java.lang.String)
 	 */
 	public static void deleteMsgActionByKey(String key_word){
-		String sql = "delete wechat_resp_msg_action a where a.key_word = ?";
+		String sql = "select * from wechat_resp_msg_action a where a.key_word = ?";
+		Record record = Db.findFirst(sql, key_word);
+		sql = "delete wechat_resp_msg_action a where a.key_word = ?";
 		Db.update(sql, key_word);
+		// 删除关联素材
+		if (record != null && record.get("material_id") != null) {
+			RecordUtil.deleteEntityById(MaterialEntity.class, record.get("material_id"));
+		}
+		// 删除关联扩展应用
+		if (record != null && record.get("app_id") != null) {
+			RecordUtil.deleteEntityById(ExtAppEntity.class, record.get("app_id"));
+		}
 	}
 	
 	
@@ -188,8 +220,8 @@ public class RespMsgActionServiceImpl {
 		if(menuType.equals(WechatMenuConstants.TYPE_CLICK)){
 			menuEntity.setMenu_key("key_"+menu_id);
 			menuEntity.set("menu_key", "key_"+menu_id);
-			menuEntity.setUrl(null);
-			menuEntity.set("url", null);
+			menuEntity.set("url", menuEntity.getUrl());
+			menuEntity.set("type", menuEntity.getType());
 			actionEntity.setKey_word("key_"+menu_id);			//请求关键字 or 菜单点击key
 			actionEntity.set("key_word", "key_"+menu_id);
 			
@@ -197,7 +229,7 @@ public class RespMsgActionServiceImpl {
 			String action_type = actionEntity.getAction_type();
 			if(RespMsgActionEntity.ACTION_TYPE_MATERIAL.equals(action_type)){		//从素材读取数据
 				//消息响应类型
-				String resp_type = actionEntity.getMaterial().getMsg_type();
+				String resp_type = materialEntity.getMsg_type();
 				//消息回复类型是文字，则先将文字信息保存到素材表
 				if(resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_TEXT)){
 					materialEntity.setIn_time(now);
@@ -218,12 +250,19 @@ public class RespMsgActionServiceImpl {
 					String key = CommonUtils.getPrimaryKey();
 					materialEntity.set("id", key);
 					materialEntity.setId(key);
+					materialEntity.set("user_id", materialEntity.getUser_id());
 					materialEntity.save();
 					
 					actionEntity.setMaterial(materialEntity);
 					actionEntity.setMaterial_id(materialEntity.getId());
+					actionEntity.set("material_id", materialEntity.getId());
 				}
 			}
+			actionEntity.set("ext_type", actionEntity.getExt_type());
+			actionEntity.set("req_type", actionEntity.getReq_type());
+			actionEntity.set("event_type", actionEntity.getEvent_type());
+			actionEntity.set("user_id", actionEntity.getUser_id());
+			actionEntity.set("action_type", actionEntity.getAction_type());
 			String actionId = CommonUtils.getPrimaryKey();
 			actionEntity.setId(actionId);
 			actionEntity.set("id", actionId);
@@ -231,6 +270,8 @@ public class RespMsgActionServiceImpl {
 		}else if(menuType.equals(WechatMenuConstants.TYPE_VIEW)){
 			menuEntity.setMenu_key(null);
 			menuEntity.set("menu_key", null);
+			menuEntity.set("url", menuEntity.getUrl());
+			menuEntity.set("type", menuEntity.getType());
 		}
 		menuEntity.update();
 	}
@@ -245,6 +286,9 @@ public class RespMsgActionServiceImpl {
 		Date now = new Date();
 		qrcodeEntity.setUpdate_time(now);
 		qrcodeEntity.set("update_time", now);
+		qrcodeEntity.set("name", qrcodeEntity.getName());
+		qrcodeEntity.set("scene_value", qrcodeEntity.getScene_value());
+		qrcodeEntity.set("user_id", qrcodeEntity.getUser_id());
 		if(StringUtils.isBlank(qrcodeEntity.getId())){
 			qrcodeEntity.setIn_time(now);
 			qrcodeEntity.set("in_time", now);
@@ -254,7 +298,7 @@ public class RespMsgActionServiceImpl {
 			qrcodeEntity.save();
 		}
 		String qrcode_id = qrcodeEntity.getId();
-		if(actionEntity !=null  && actionEntity.getMaterial() !=null ){
+		if (actionEntity != null && materialEntity != null) {
 			qrcodeEntity.setScene_action("key_" + qrcode_id);
 			qrcodeEntity.set("scene_action", "key_" + qrcode_id);
 			actionEntity.setKey_word("key_" + qrcode_id);			//请求关键字 or 菜单点击key or 情景码扫描
@@ -264,7 +308,7 @@ public class RespMsgActionServiceImpl {
 			String action_type = actionEntity.getAction_type();
 			if(RespMsgActionEntity.ACTION_TYPE_MATERIAL.equals(action_type)){		//从素材读取数据
 				//消息响应类型
-				String resp_type = actionEntity.getMaterial().getMsg_type();
+				String resp_type = materialEntity.getMsg_type();
 				//消息回复类型是文字，则先将文字信息保存到素材表
 				if(resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_TEXT)){
 					materialEntity.setIn_time(now);
@@ -280,14 +324,27 @@ public class RespMsgActionServiceImpl {
 					String materialXml = MaterialUtil.data2Xml(materialList);
 					materialEntity.setXml_data(materialXml);
 					materialEntity.set("xml_data", materialXml);
+					String key = CommonUtils.getPrimaryKey();
+					materialEntity.set("id", key);
+					materialEntity.setId(key);
+					materialEntity.set("user_id", materialEntity.getUser_id());
+					materialEntity.save();
+					
 					logger.debug("materiaXmlParam json data: {} "+ materialXml);			
 					actionEntity.setMaterial(materialEntity);
 					actionEntity.set("material_id", materialEntity.getId());
-					materialEntity.save();
 				}
 			}
+			actionEntity.set("ext_type", actionEntity.getExt_type());
+			actionEntity.set("req_type", actionEntity.getReq_type());
+			actionEntity.set("event_type", actionEntity.getEvent_type());
+			actionEntity.set("user_id", actionEntity.getUser_id());
+			actionEntity.set("action_type", actionEntity.getAction_type());
+			String key = CommonUtils.getPrimaryKey();
+			actionEntity.set("id", key);
 			actionEntity.save();
 		}
+		qrcodeEntity.set("id", qrcodeEntity.getId());
 		qrcodeEntity.update();
 	}
 
@@ -306,7 +363,7 @@ public class RespMsgActionServiceImpl {
 		String action_type = actionEntity.getAction_type();
 		if(RespMsgActionEntity.ACTION_TYPE_MATERIAL.equals(action_type)){		//从素材读取数据
 			//消息响应类型
-			String resp_type = actionEntity.getMaterial().getMsg_type();
+			String resp_type = materialEntity.getMsg_type();
 			//消息回复类型是文字，则先将文字信息保存到素材表
 			if(resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_TEXT)){
 				materialEntity.setIn_time(now);
@@ -327,6 +384,7 @@ public class RespMsgActionServiceImpl {
 				String key = CommonUtils.getPrimaryKey();
 				materialEntity.set("id", key);
 				materialEntity.setId(key);
+				materialEntity.set("user_id", materialEntity.getUser_id());
 				materialEntity.save();
 				
 				actionEntity.setMaterial(materialEntity);
@@ -334,10 +392,21 @@ public class RespMsgActionServiceImpl {
 			}
 		}
 		//保存前先判断改消息规则是否存在，某种规则必须确保唯一
-		RespMsgActionEntity actionEntity2 = loadMsgAction(actionEntity.getExt_type(), actionEntity.getReq_type(), actionEntity.getEvent_type(), actionEntity.getKey_word(),actionEntity.getSysUser());
-		if(null != actionEntity2){
+		RespMsgAction actionEntity2 = loadMsgAction(
+				actionEntity.getExt_type(), actionEntity.getReq_type(),
+				actionEntity.getEvent_type(), actionEntity.getKey_word(),
+				actionEntity.getSysUser());
+		if(null != actionEntity2 && actionEntity2.getId() != null){
 			throw new RuntimeException("相同的消息动作已经存在");
 		}
+		actionEntity.set("ext_type", actionEntity.getExt_type());
+		actionEntity.set("req_type", actionEntity.getReq_type());
+		actionEntity.set("event_type", actionEntity.getEvent_type());
+		actionEntity.set("key_word", actionEntity.getKey_word());
+		actionEntity.set("user_id", actionEntity.getUser_id());
+		actionEntity.set("action_type", actionEntity.getAction_type());
+		String key = CommonUtils.getPrimaryKey();
+		actionEntity.set("id", key);
 		actionEntity.save();
 	}
 

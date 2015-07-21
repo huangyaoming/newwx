@@ -1,5 +1,13 @@
 package com.byhealth.common.utils;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 对象常用方法工具类
  */
@@ -42,4 +50,36 @@ public final class BeanUtil {
         }
         return object;
     }
+    
+    private static final List<Class<?>> list;
+    
+    static {
+    	list = new ArrayList<Class<?>>();
+    	list.add(String.class);
+    	list.add(Date.class);
+    	list.add(int.class);
+    	list.add(Integer.class);
+    	list.add(long.class);
+    	list.add(Long.class);
+    	list.add(BigDecimal.class);
+    	list.add(double.class);
+    	list.add(Double.class);
+    }
+    
+    public static boolean isSimpleType(Class<?> cls) {
+    	return list.contains(cls);
+    }
+    
+    public static void requestParams2Bean(HttpServletRequest request, Class<?> obj) {
+    	if (obj == null || request == null) {
+    		return ;
+    	}
+    	Map<String, String> params = WebUtil.getRequestParams(request);
+    	
+    }
+    
+    public static void bean2Model() {
+    	
+    }
+    
 }

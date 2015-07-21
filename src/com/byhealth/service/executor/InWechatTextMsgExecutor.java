@@ -5,7 +5,7 @@ import com.byhealth.common.constants.MsgTemplateConstants;
 import com.byhealth.common.constants.WechatReqMsgtypeConstants;
 import com.byhealth.common.utils.NameTool;
 import com.byhealth.context.WechatContext;
-import com.byhealth.entity.RespMsgActionEntity;
+import com.byhealth.entity.param.RespMsgAction;
 import com.byhealth.service.impl.MyTextExtService;
 import com.byhealth.service.impl.RespMsgActionServiceImpl;
 
@@ -25,24 +25,24 @@ public class InWechatTextMsgExecutor extends InServiceExecutor {
 		ReqTextMessage textMessage = new ReqTextMessage(
 				WechatContext.getWechatPostMap());
 		logger.info("进入文本消息处理器fromUserName=" + textMessage.getFromUserName());
-		RespMsgActionEntity actionEntity = RespMsgActionServiceImpl
+		RespMsgAction action = RespMsgActionServiceImpl
 				.loadMsgAction(null,
 						WechatReqMsgtypeConstants.REQ_MSG_TYPE_TEXT, null,
 						textMessage.getContent(), WechatContext
 								.getPublicAccount().getSysUser());
 		// 没有找到匹配规则
-		if (null == actionEntity || actionEntity.getId() == null
-				|| "".equals(actionEntity.getId())) {
+		if (null == action || action.getId() == null
+				|| "".equals(action.getId())) {
 			String res = textExtService.execute();
 			if (StringUtils.isNotBlank(res)) { // 如果有数据则直接返回
 				return res;
 			}
 			// 返回默认回复消息
-			actionEntity = RespMsgActionServiceImpl.loadMsgAction(
+			action = RespMsgActionServiceImpl.loadMsgAction(
 					MsgTemplateConstants.WECHAT_DEFAULT_MSG, null, null, null,
 					WechatContext.getPublicAccount().getSysUser());
 		}
-		return doAction(actionEntity);
+		return doAction(action);
 	}
 
 	@Override

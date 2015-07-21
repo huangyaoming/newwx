@@ -7,7 +7,7 @@ var viewDialog;
 var datagrid;
 
 $(function(){
-	
+	alert("kefu");
 	init();
 	
 });
@@ -30,7 +30,7 @@ function init(){
 	}).dialog('close');
 	
 	datagrid = $('#datagrid').datagrid({
-		url : domain + '/admin/qrcode/pageList',
+		url : domain + '/admin/kefu/pageList',
 		toolbar : '#toolbar',
 		iconCls : 'icon-save',
 		pagination : true,

@@ -21,7 +21,7 @@ var busiweb_combobox;
 
 $(function(){
 	//设置dwr同步执行
-	dwr.engine.setAsync(false);
+	//dwr.engine.setAsync(false);
 	init();
 
 	//绑定图文删除按钮事件
@@ -125,10 +125,10 @@ function init(){
 			            $(".upload_preview").show();
 			            
 			            if(isLocalUrl(_url)){
-			            	var tmpContent = loadContent(_url);
+			            	var tmpContent = data.content.length > j ? data.content[j].materialContent : "";
 			            	$("#appmsgContent1").val(tmpContent);
 			            	editor.addListener("ready", function () {
-			        	        this.setContent(tmpContent);
+			            		editor.setContent(tmpContent);
 			        		});
 			            }else{
 			            	$(".frm_checkbox_label").addClass("selected");
@@ -147,13 +147,13 @@ function init(){
 						$("#appmsg_thumb2").attr("src",item.PicUrl);
 						$("#appmsg_thumb2").parent().addClass("has_thumb");
 					    if(isLocalUrl(_url)){
-			            	$("#appmsgContent2").val(loadContent(_url));
+			            	$("#appmsgContent2").val(data.content.length > j ? data.content[j].materialContent : "");
 			            }else{
 			    			$("#appmsgUrl2").attr("select","1");
 			    			$("#appmsgUrl2").val(_url);
 			            }
 					}else{
-						addAppmsg(item);
+						addAppmsg(item, data);
 					}
 				});
 			}
@@ -162,8 +162,8 @@ function init(){
 	
 	
 	//默认编辑第一条消息
-	curDataId = 1;	//當前編輯的圖文
-	newsNum = 2;	//圖文個數，最小2條
+	curDataId = 1;	//当前编辑的图文
+	newsNum = 2;	//图文条数，最小两条
     
     $('#news_title').keyup(function() {
 		$("#appmsg_title"+curDataId).find("a").html($(this).val());
@@ -189,9 +189,9 @@ function deleteImage(){
 /**
  * 添加一条图文
  */
-function addAppmsg(item){
-	if(total>7){	//限制最多10条
-		$.messager.alert('提示',	'你最多可以加入8条圖文消息。','warning');
+function addAppmsg(item, data){
+	if (total > 10){	//限制最多10条
+		$.messager.alert('提示',	'你最多可以加入10条图文信息。','warning');
 		return false;
 	}
 	//图文总数加1
@@ -203,12 +203,12 @@ function addAppmsg(item){
 		'<input type="hidden" class="appmsgContent" id="appmsgContent'+newsNum+'" data-id="'+newsNum+'" value=""/>' +
 		'<input type="hidden" class="appmsgUrl" id="appmsgUrl'+newsNum+'" data-id="'+newsNum+'" value="" select=""/>' +
 		'<img id="appmsg_thumb'+newsNum+'" src="" class="js_appmsg_thumb appmsg_thumb">' +
-		'<i class="appmsg_thumb default">縮略圖</i>' +
+		'<i class="appmsg_thumb default">缩略图</i>' +
 		'<h4 class="appmsg_title" id="appmsg_title'+newsNum+'">' +
-			'<a target="_blank" href="javascript:void(0);" onclick="return false;">標題</a>' +
+			'<a target="_blank" href="javascript:void(0);" onclick="return false;">标题</a>' +
 		'</h4>' +
 		'<div class="appmsg_edit_mask">' +
-			'<a href="javascript:void(0);" onclick="return false;" data-id="'+newsNum+'" class="icon18_common edit_gray js_edit">編輯</a>' +
+			'<a href="javascript:void(0);" onclick="return false;" data-id="'+newsNum+'" class="icon18_common edit_gray js_edit">编辑</a>' +
 			'<a href="javascript:void(0);" onclick="return false;" data-id="'+newsNum+'" class="icon18_common del_gray js_del">删除</a>' +
 		'</div>' +
 	'</div>';
@@ -220,7 +220,7 @@ function addAppmsg(item){
 		$("#appmsg_thumb"+newsNum).attr("src",item.PicUrl);
 		$("#appmsg_thumb"+newsNum).parent().addClass("has_thumb");
 	    if(isLocalUrl(_url)){
-        	$("#appmsgContent"+newsNum).val(loadContent(_url));
+        	$("#appmsgContent"+newsNum).val(data.content.length >= newsNum ? data.content[newsNum - 1].materialContent : "");
         }else{
 			$("#appmsgUrl"+newsNum).attr("select","1");
 			$("#appmsgUrl"+newsNum).val(_url);
@@ -235,7 +235,7 @@ function addAppmsg(item){
  */
 function deleteAppmsg(dataId){
 	if(total<3){	//限制最少2条
-		$.messager.alert('提示','無法刪除，多條圖文至少需要2條消息。','warning');
+		$.messager.alert('提示','无法删除，多图文至少需要2条图文信息。','warning');
 		return false;
 	}
 	total = total-1;
@@ -413,29 +413,6 @@ function submitAppMsg(){
 	});
 }
 
-
-/**
- * 读取素材内容
- */
-function loadContent(url){
-	if(!isLocalUrl(url)){
-		return "";
-	}
-	var content = "";
-	var path = url.split(staticDomain)[1];
-	materialService.loadMaterialContentByUrl(path,{
-		callback:function(data){
-			content = data;
-		},
-        errorHandler:function(errorString, exception){
-        	alert("正文內容获取失败");
-        },
-        exceptionHandler:function(exceptionString, exception){
-        	alert("正文內容获取失败");
-        }
-	});
-	return content;
-}
 /**
  * 判断链接是否是本项目链接
  * @param url

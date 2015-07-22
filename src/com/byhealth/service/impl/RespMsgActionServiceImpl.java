@@ -389,6 +389,8 @@ public class RespMsgActionServiceImpl {
 				
 				actionEntity.setMaterial(materialEntity);
 				actionEntity.set("material_id", materialEntity.getId());
+			} else if (resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_NEWS)) {
+				
 			}
 		}
 		//保存前先判断改消息规则是否存在，某种规则必须确保唯一

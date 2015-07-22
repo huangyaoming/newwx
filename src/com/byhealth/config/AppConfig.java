@@ -39,6 +39,19 @@ public final class AppConfig {
     public static final String RESOURCE_URL = GetPropertiesVal.getLabel("resource.url");
     
     public static final String STATIC_DOMAIN = GetPropertiesVal.getLabel("staticDomain");
+    /**
+     * 生成html文件的存放路径
+     */
     public static final String STATIC_PATH = GetPropertiesVal.getLabel("staticPath");
+    
+    /**
+     * 上传图片及生成的html文件放置服务地址
+     */
+    public static final String FILE_PATH = GetPropertiesVal.getLabel("filePath");
+    
+    /**
+     * 上传图片及生成的html文件放置的真实路径
+     */
+    public static final String REAL_PATH = GetPropertiesVal.getLabel("realPath");
 
 }

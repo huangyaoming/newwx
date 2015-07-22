@@ -1,4 +1,4 @@
-<%@page import="com.byhealth.wechat.config.AppConfig"%>
+<%@page import="com.byhealth.config.AppConfig"%>
 <%@ page language="java" pageEncoding="utf-8"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.io.*"%>

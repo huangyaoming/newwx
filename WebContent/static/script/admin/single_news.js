@@ -14,7 +14,7 @@ var busiweb_combobox;
 
 $(function(){
 	//设置dwr同步执行
-	dwr.engine.setAsync(false);
+	//dwr.engine.setAsync(false);
  	init();
  	//实例化form组建
  	news_form = $('#news_form').form();
@@ -108,9 +108,9 @@ function init (){
 	            
 	            var _url = json.Articles.item.Url;
 	            if(isLocalUrl(_url)){
-	            	var tmpContent = loadContent(_url);
+	            	var tmpContent = data.content.length > 0 ? data.content[0].materialContent : "";
 	            	editor.addListener("ready", function () {
-	        	        this.setContent(tmpContent);
+	            		editor.setContent(tmpContent);
 	        		});
 	            }else{
 	            	$(".frm_checkbox_label").addClass("selected");
@@ -233,31 +233,6 @@ function submitNewsForm(){
 function addDesc(){
 	$(".js_desc_area").show();
 	$(".js_addDesc").hide();
-}
-
-
-/**
- * 读取素材内容
- */
-function loadContent(url){
-	if(!isLocalUrl(url)){
-		return "";
-	}
-	var path = url.split(staticDomain)[1];
-	var content = "";
-	
-	materialService.loadMaterialContentByUrl(path,{
-		callback:function(data){
-			content = data;
-		},
-        errorHandler:function(errorString, exception){
-        	alert("正文內容获取失败");
-        },
-        exceptionHandler:function(exceptionString, exception){
-        	alert("正文內容获取失败");
-        }
-	});
-	return content;
 }
 
 /**

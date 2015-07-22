@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
-<%@ page import="com.byhealth.wechat.config.AppConfig"%>
+<%@ page import="com.byhealth.config.AppConfig"%>
 <%@ page import="java.util.Properties"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Arrays"%>
 <%@ page import="java.io.FileInputStream"%>
-<%@ page import="ueditor.Uploader"%>
+<%@ page import="com.byhealth.ueditor.Uploader"%>
 <%@ page import="java.io.File"%>
 <%@ page import="java.util.Map"%>
 
@@ -17,7 +17,10 @@
 	response.setCharacterEncoding("UTF-8");
 	System.out.println("上传图片开始");
 	String currentPath = request.getRequestURI().replace(request.getContextPath(), "");
-	String mySavePath = AppConfig.STATIC_PATH;
+	// 文件存放在服务器上的真实地址
+	String mySavePath = AppConfig.REAL_PATH;
+	// 文件服务映射虚拟地址前缀
+	String fileServer = AppConfig.FILE_PATH;
 	
 	File currentFile = new File(currentPath);
 	//为了解决tomcat与jetty之间的差异问题，如果不转换jetty会出问题
@@ -90,6 +93,7 @@
 	up.setAllowFiles(fileType);
 	up.setMaxSize(500 * 1024); //单位KB
 	up.myUpload(true);//上传到非站点服务器（apache静态资源服务器）
+	//up.myUpload(false);//获取服务的绝对路径，加上上传的相对路径，得到上传文件路径
 	String resObject = "{'url':'" + up.getUrl() + "','fileType':'" + up.getType() + "','fileName':'" + up.getFileName()+"','title':'" + up.getTitle()
 			+ "','state':'" + up.getState() + "','original':'" + up.getOriginalName() + "'}";
 	System.out.println("图片上传返回参数："+resObject);

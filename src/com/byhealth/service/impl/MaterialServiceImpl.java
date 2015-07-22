@@ -1,5 +1,6 @@
 package com.byhealth.service.impl;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ public class MaterialServiceImpl {
 		String date_str = CommonUtils.date2String(new Date());
 		//material.setIn_time(new Date());
 		material.set("in_time", new Date());
+		material.set("msg_type", material.getMsg_type());
+		material.set("user_id", material.getUser_id());
 		String msgType = material.getMsg_type();
 		if(null != msgType && msgType.equals("news")){	//图文消息
 			if(null != contents && contents.size() > 0 ){
@@ -54,17 +57,20 @@ public class MaterialServiceImpl {
 				String xml_data = material.getXml_data();
 				int l = contents.size();
 				for(int i = 0; i < l; i++){
-					String htmlPath = AppConfig.STATIC_PATH;
-					String htmlUrl = "/upload/html/material/" + CommonUtils.getPrimaryKey()+".html";
+					String htmlPath = AppConfig.REAL_PATH;
+					//String htmlPath = request.getSession().getServletContext().getRealPath("/");
+					//String localPath = new File(htmlPath).getPath();
+					String htmlUrl = CommonUtils.getPrimaryKey()+".html";
+					htmlPath = htmlPath + AppConfig.STATIC_PATH + htmlUrl;
 					//如果不存在则创建文件夹
-					FileUtil.makeDirectory(htmlPath + "/upload/html/material/");
-					htmlPath = htmlPath + htmlUrl;
+					FileUtil.makeDirectory(htmlPath);
 					Map<String,String> content = contents.get(i);
 					content.put("date", date_str);
 					//通过freemarker生成静态页面，并返回URL
 					freemarker.createHTML(content, "material.ftl", htmlPath);
-					xml_data = xml_data.replaceAll("\\<Url_"+i+">(.*?)\\</Url_"+i+">", 
-													"<Url><![CDATA["+AppConfig.STATIC_DOMAIN+htmlUrl+"]]></Url>");
+					xml_data = xml_data.replaceAll("\\<Url_" + i
+							+ ">(.*?)\\</Url_" + i + ">", "<Url><![CDATA["
+							+ AppConfig.FILE_PATH + AppConfig.STATIC_PATH + htmlUrl + "]]></Url>");
 				}
 				xml_data.replaceAll("\\<ArticleCount>(.*?)\\</ArticleCount>", "<ArticleCount>"+l+"</ArticleCount>");
 				//material.setXml_data(xml_data);
@@ -75,16 +81,16 @@ public class MaterialServiceImpl {
 			String key = CommonUtils.getPrimaryKey();
 			material.set("id", key);
 			material.save();
-			return;
+		} else {
+			material.set("id", material.getId());
+			material.update();
 		}
-		material.update();
 	}
 	
-	public String loadMaterialContentByUrl(String url) {
+	public static String loadMaterialContentByUrl(String url) {
 		String conten = "error";
 		try {
-			String path = AppConfig.STATIC_DOMAIN + url;
-			conten = HttpUtil.get(path);
+			conten = HttpUtil.get(url);
 			conten = conten.substring(conten.indexOf("<!--###@content@###-->") + 22, conten.lastIndexOf("<!--###@content@###-->"));
 		} catch (Exception e) {
 			throw new RuntimeException(e);

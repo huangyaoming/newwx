@@ -150,8 +150,6 @@
 	<link href="<%=resourceUrl%>/css/appmsg_edit.css?v=2014030901" rel="stylesheet" type="text/css"/>
 	<script src="<%=resourceUrl%>/js/jquery.json-2.4.min.js" type="text/javascript" charset="UTF-8"></script>
 	<script src="<%=resourceUrl%>/js/jquery.xml2json.js" type="text/javascript" charset="UTF-8"></script>
-	<script type="text/javascript" src="<%=domain %>/dwr/engine.js"></script>
-	<script type="text/javascript" src="<%=domain %>/dwr/interface/materialService.js"></script>
 	<script src="<%=resourceUrl %>/script/admin/multiple_news.js?v=2014052303" type="text/javascript" charset="UTF-8"></script>
 	<script type="text/javascript">
 		var material_id = '${id}';

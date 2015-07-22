@@ -1,6 +1,8 @@
 package com.byhealth.entity.param;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
@@ -30,7 +32,7 @@ public class Material {
 
 	private SysUser sysUser; // 添加（归属）用户
 
-	private String content; // 素材内容，不需要映射
+	private List<Map<String, String>> content; // 素材内容，不需要映射
 
 	public String getId() {
 		return id;
@@ -75,11 +77,11 @@ public class Material {
 		this.sysUser = sysUser;
 	}
 
-	public String getContent() {
+	public List<Map<String, String>> getContent() {
 		return content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(List<Map<String, String>> content) {
 		this.content = content;
 	}
 

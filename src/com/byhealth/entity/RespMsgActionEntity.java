@@ -9,7 +9,7 @@ import com.byhealth.common.utils.CommonUtils;
 import com.byhealth.common.utils.RecordUtil;
 
 /**
- * 消息动作规则表 wechat_resp_msg_action
+ * 响应消息动作规则表 wechat_resp_msg_action
  * 
  * @author huangym
  */

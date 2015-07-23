@@ -99,9 +99,9 @@ public class RespMsgActionServiceImpl {
 		return actionEntity;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionById(java.lang.String)
+	/**
+	 * 根据ID删除响应消息动作表
+	 * @param ids
 	 */
 	public static void deleteMsgActionById(String ids) {
 		if(null == ids || "".equals(ids)){
@@ -111,49 +111,20 @@ public class RespMsgActionServiceImpl {
 		String _ids[] = ids.split(",");
 		if(null != _ids && _ids.length>0){
 			for(String id : _ids){
-				Record record = Db.findById("wechat_resp_msg_action", id);
 				RecordUtil.deleteEntityById(RespMsgActionEntity.class, id);
-				// 删除关联素材
-				if (record != null && record.get("material_id") != null) {
-					RecordUtil.deleteEntityById(MaterialEntity.class, record.get("material_id"));
-				}
-				// 删除关联扩展应用
-				if (record != null && record.get("app_id") != null) {
-					RecordUtil.deleteEntityById(ExtAppEntity.class, record.get("app_id"));
-				}
 			}
 		}else{
-			Record record = Db.findById("wechat_resp_msg_action", ids);
 			RecordUtil.deleteEntityById(RespMsgActionEntity.class, ids);
-			// 删除关联素材
-			if (record != null && record.get("material_id") != null) {
-				RecordUtil.deleteEntityById(MaterialEntity.class, record.get("material_id"));
-			}
-			// 删除关联扩展应用
-			if (record != null && record.get("app_id") != null) {
-				RecordUtil.deleteEntityById(ExtAppEntity.class, record.get("app_id"));
-			}
 		}
 	}
 	
-	/*
-	 * 根据关键字删除消息规则
-	 * (non-Javadoc)
-	 * @see com.byhealth.wechat.base.admin.service.RespMsgActionService#deleteMsgActionByKey(java.lang.String)
+	/**
+	 * 根据关键字删除响应消息动作表
+	 * @param key_word
 	 */
 	public static void deleteMsgActionByKey(String key_word){
-		String sql = "select * from wechat_resp_msg_action a where a.key_word = ?";
-		Record record = Db.findFirst(sql, key_word);
-		sql = "delete wechat_resp_msg_action a where a.key_word = ?";
+		String sql = "delete wechat_resp_msg_action a where a.key_word = ?";
 		Db.update(sql, key_word);
-		// 删除关联素材
-		if (record != null && record.get("material_id") != null) {
-			RecordUtil.deleteEntityById(MaterialEntity.class, record.get("material_id"));
-		}
-		// 删除关联扩展应用
-		if (record != null && record.get("app_id") != null) {
-			RecordUtil.deleteEntityById(ExtAppEntity.class, record.get("app_id"));
-		}
 	}
 	
 	
@@ -256,6 +227,9 @@ public class RespMsgActionServiceImpl {
 					actionEntity.setMaterial(materialEntity);
 					actionEntity.setMaterial_id(materialEntity.getId());
 					actionEntity.set("material_id", materialEntity.getId());
+				} else if (resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_NEWS)) {
+					actionEntity.setMaterial(materialEntity);
+					actionEntity.set("material_id", materialEntity.getId());
 				}
 			}
 			actionEntity.set("ext_type", actionEntity.getExt_type());
@@ -333,6 +307,9 @@ public class RespMsgActionServiceImpl {
 					logger.debug("materiaXmlParam json data: {} "+ materialXml);			
 					actionEntity.setMaterial(materialEntity);
 					actionEntity.set("material_id", materialEntity.getId());
+				} else if (resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_NEWS)) {
+					actionEntity.setMaterial(materialEntity);
+					actionEntity.set("material_id", materialEntity.getId());
 				}
 			}
 			actionEntity.set("ext_type", actionEntity.getExt_type());
@@ -390,7 +367,8 @@ public class RespMsgActionServiceImpl {
 				actionEntity.setMaterial(materialEntity);
 				actionEntity.set("material_id", materialEntity.getId());
 			} else if (resp_type.equals(WechatRespMsgtypeConstants.RESP_MESSAGE_TYPE_NEWS)) {
-				
+				actionEntity.setMaterial(materialEntity);
+				actionEntity.set("material_id", materialEntity.getId());
 			}
 		}
 		//保存前先判断改消息规则是否存在，某种规则必须确保唯一

@@ -109,6 +109,10 @@ public class WechatMenuServiceImpl {
 		return res;
 	}
 	
+	/**
+	 * 删除菜单，并删除对应的菜单响应消息动作表
+	 * @param id
+	 */
 	public static void deleteMenu(String id){
 		if(StringUtils.isNotBlank(id)){
 			Db.deleteById("wechat_menu", id);
